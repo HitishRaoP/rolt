@@ -1,0 +1,9 @@
+{
+    "extends" : "@rolt/typescript-config/base.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "dist",
+        "moduleResolution" : "node16",
+        "module": "Node16"
+    }
+}

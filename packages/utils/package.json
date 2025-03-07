@@ -1,0 +1,13 @@
+{
+	"name": "@rolt/utils",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "rm -rf dist && tsc",
+		"lint": "eslint .",
+		"check-types": "tsc --noEmit --pretty"
+	},
+	"devDependencies": {
+		"@rolt/typescript-config": "workspace:^"
+	}
+}

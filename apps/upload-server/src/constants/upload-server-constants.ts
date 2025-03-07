@@ -1,0 +1,9 @@
+export const UPLOAD_SERVER_CONSTANTS = {
+    PORT: process.env.PORT,
+    FRONTEND_URL: process.env.FRONTEND_URL!,
+    GITHUB_ACCESS_TOKEN: process.env.GITHUB_ACCESS_TOKEN!,
+    MINIO_ACCESS_KEY: process.env.MINIO_ACCESS_KEY!,
+    MINIO_SECRET_ACCESS_KEY: process.env.MINIO_SECRET_ACCESS_KEY!,
+    MINIO_ENDPOINT: process.env.MINIO_ENDPOINT!,
+    MINIO_BUCKET: process.env.MINIO_BUCKET!
+}
