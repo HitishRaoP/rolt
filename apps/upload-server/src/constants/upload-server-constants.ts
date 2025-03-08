@@ -6,9 +6,10 @@ config({
 })
 
 export const UPLOAD_SERVER_CONSTANTS = {
-    PORT: process.env.PORT!,
-    FRONTEND_URL: process.env.FRONTEND_URL!,
-    GITHUB_ACCESS_TOKEN: process.env.GITHUB_ACCESS_TOKEN!,
+    DEV: {
+        PORT: process.env.PORT!,
+        FRONTEND_URL: process.env.FRONTEND_URL!,
+    },
     AWS: {
         SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY!,
         ACCESS_KEY_ID: process.env.ACCESS_KEY_ID!,

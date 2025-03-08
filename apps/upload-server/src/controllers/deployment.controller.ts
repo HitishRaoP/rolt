@@ -58,6 +58,7 @@ export const CreateDeployment = async (req: Request, res: Response): Promise<voi
         const sendMessageCommand = new SendMessageCommand({
             MessageBody: JSON.stringify(response),
             QueueUrl,
+            MessageGroupId: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME
         });
         await sqsClient.send(sendMessageCommand);
         return sendResponse({

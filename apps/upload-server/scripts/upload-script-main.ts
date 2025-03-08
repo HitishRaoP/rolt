@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import { CreateBucket } from "./s3";
-import { CreateQueue } from "./sqs";
+import { CreateQueue, DeleteQueue } from "./sqs";
 import { CreateRule, CreateTarget } from "./events-bridge";
 import { CreateECRRepository } from "./ecr";
 
@@ -20,7 +20,10 @@ const services: Record<ServiceKey, Service> = {
     },
     sqs: {
         name: "SQS",
-        actions: { "Create Queue": CreateQueue },
+        actions: {
+            "Create Queue": CreateQueue,
+            "Delete Queue": DeleteQueue
+        },
     },
     events_bridge: {
         name: "Events Bridge",

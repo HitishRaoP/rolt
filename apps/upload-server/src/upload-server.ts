@@ -10,7 +10,9 @@ const app = express();
 const init = async () => {
     app.use(express.json());
 
-    app.use(cors())
+    app.use(cors({
+        origin: UPLOAD_SERVER_CONSTANTS.DEV.FRONTEND_URL
+    }))
 
     app.get("/", (req: Request, res: Response) => {
         return sendResponse({
@@ -22,8 +24,8 @@ const init = async () => {
 
     app.use("/deployment", DeploymentRouter);
 
-    app.listen(UPLOAD_SERVER_CONSTANTS.PORT, () => {
-        console.log(`Server Running on http://localhost:${UPLOAD_SERVER_CONSTANTS.PORT}`);
+    app.listen(UPLOAD_SERVER_CONSTANTS.DEV.PORT, () => {
+        console.log(`Server Running on http://localhost:${UPLOAD_SERVER_CONSTANTS.DEV.PORT}`);
     })
 
 }
