@@ -7,13 +7,13 @@ const sqsClient = new SQSClient({
         accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
         secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
     },
-    endpoint: UPLOAD_SERVER_CONSTANTS.SQS.SQS_ENDPOINT,
+    endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
 });
 
 export const CreateQueue = async () => {
     try {
         const command = new CreateQueueCommand({
-            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.SQS_QUEUE_NAME,
+            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
             Attributes: {
                 FifoQueue: "true"
             }
@@ -24,6 +24,6 @@ export const CreateQueue = async () => {
             response
         });
     } catch (error) {
-        throw new Error(`${error}`)
+        console.error("Error Creating Queue:", error);
     }
 }

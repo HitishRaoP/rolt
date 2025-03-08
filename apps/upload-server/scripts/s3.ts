@@ -7,13 +7,13 @@ const s3Client = new S3Client({
         accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
         secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
     },
-    endpoint: UPLOAD_SERVER_CONSTANTS.S3.S3_ENDPOINT,
+    endpoint: UPLOAD_SERVER_CONSTANTS.S3.ENDPOINT,
 });
 
 export const CreateBucket = async () => {
     try {
         const command = new CreateBucketCommand({
-            Bucket: UPLOAD_SERVER_CONSTANTS.S3.S3_BUCKET
+            Bucket: UPLOAD_SERVER_CONSTANTS.S3.BUCKET
         })
         const response = await s3Client.send(command);
         console.log({
@@ -21,6 +21,6 @@ export const CreateBucket = async () => {
             response
         });
     } catch (error) {
-        throw new Error(`${error}`)
+        console.error("Error Creating Bucket:", error);
     }
 }

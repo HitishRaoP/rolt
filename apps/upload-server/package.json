@@ -7,7 +7,7 @@
 		"start": "node dist/api/index.js",
 		"lint": "eslint .",
 		"check-types": "tsc --noEmit --pretty",
-		"bootstrap": "ts-node scripts/init.ts",
+		"bootstrap": "ts-node scripts/bootstrap.ts",
 		"script": "ts-node scripts/upload-script-main.ts"
 	},
 	"packageManager": "pnpm@10.6.1",
@@ -26,6 +26,7 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-ecr": "^3.758.0",
+		"@aws-sdk/client-eventbridge": "^3.758.0",
 		"@aws-sdk/client-s3": "^3.758.0",
 		"@aws-sdk/client-sqs": "^3.758.0",
 		"@rolt/schemas": "workspace:^",

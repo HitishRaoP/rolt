@@ -1,70 +1,85 @@
 import inquirer from "inquirer";
 import { CreateBucket } from "./s3";
 import { CreateQueue } from "./sqs";
+import { CreateRule, CreateTarget } from "./events-bridge";
+import { CreateECRRepository } from "./ecr";
+
+type ServiceAction = () => Promise<void>;
+
+type Service = {
+    name: string;
+    actions: Record<string, ServiceAction>;
+};
+
+type ServiceKey = "s3" | "sqs" | "events_bridge" | "ecr";
+
+const services: Record<ServiceKey, Service> = {
+    s3: {
+        name: "S3",
+        actions: { "Create Bucket": CreateBucket },
+    },
+    sqs: {
+        name: "SQS",
+        actions: { "Create Queue": CreateQueue },
+    },
+    events_bridge: {
+        name: "Events Bridge",
+        actions: {
+            "Create Rule": CreateRule,
+            "Create Target": CreateTarget,
+        },
+    },
+    ecr: {
+        name: "ECR",
+        actions: {
+            "Create Repository": CreateECRRepository
+        }
+    }
+};
 
 const main = async () => {
     while (1) {
-        const { Main } = await inquirer.prompt([
+        const { serviceKey } = await inquirer.prompt<{
+            serviceKey: ServiceKey | "exit";
+        }>([
             {
                 type: "list",
-                name: "Main",
+                name: "serviceKey",
                 message: "Select an AWS Service",
                 choices: [
-                    { name: "S3", value: "s3" },
-                    { name: "SQS", value: "sqs" },
+                    ...Object.entries(services).map(([key, { name }]) => ({ name, value: key })),
                     { name: "Exit", value: "exit" },
                 ],
             },
         ]);
 
-        if (Main === "exit") {
+        if (serviceKey === "exit") {
             console.log("Exiting...");
             break;
         }
 
-        await handleService(Main);
+        await handleService(serviceKey);
     }
 };
 
-const handleService = async (service: string) => {
-    let choices;
-    switch (service) {
-        case "s3":
-            choices = [
-                { name: "Create Bucket", value: "create_bucket" },
-                { name: "Back", value: "back" },
-            ];
-            break;
-        case "sqs":
-            choices = [
-                { name: "Create Queue", value: "create_queue" },
-                { name: "Back", value: "back" },
-            ];
-            break;
-        default:
-            return;
-    }
+const handleService = async (serviceKey: ServiceKey) => {
+    const service = services[serviceKey];
+    if (!service) return;
 
-    const { action } = await inquirer.prompt([
-        {
-            type: "list",
-            name: "action",
-            message: `Select an action for ${service.toUpperCase()}`,
-            choices,
-        },
-    ]);
+    const actions: Record<string, ServiceAction | null> = { ...service.actions, Back: null };
 
-    if (action === "back") return;
+    while (1) {
+        const { actionKey } = await inquirer.prompt<{ actionKey: string }>([
+            {
+                type: "list",
+                name: "actionKey",
+                message: `Select an action for ${service.name}`,
+                choices: Object.keys(actions).map((key) => ({ name: key, value: key })),
+            },
+        ]);
 
-    switch (action) {
-        case "create_bucket":
-            await CreateBucket();
-            break;
-        case "create_queue":
-            await CreateQueue();
-            break;
-        default:
-            console.log("Invalid action.");
+        if (actionKey === "Back") break;
+        await actions[actionKey]?.();
     }
 };
 

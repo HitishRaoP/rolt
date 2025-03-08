@@ -15,14 +15,21 @@ export const UPLOAD_SERVER_CONSTANTS = {
         REGION: process.env.REGION!,
     },
     SQS: {
-        SQS_ENDPOINT: process.env.SQS_ENDPOINT!,
-        SQS_QUEUE_NAME: process.env.SQS_QUEUE_NAME!,
+        ENDPOINT: process.env.SQS_ENDPOINT!,
+        QUEUE_NAME: process.env.SQS_QUEUE_NAME!,
     },
     S3: {
-        S3_BUCKET: process.env.S3_BUCKET!,
-        S3_ENDPOINT: process.env.S3_ENDPOINT!
+        BUCKET: process.env.S3_BUCKET!,
+        ENDPOINT: process.env.S3_ENDPOINT!
     },
     ECR: {
-        ECR_ENDPOINT: process.env.S3_ENDPOINT!
+        ENDPOINT: process.env.S3_ENDPOINT!,
+        REPO_NAME: process.env.ECR_REPO_NAME!
+    },
+    EVENTS_BRIDGE: {
+        ENDPOINT: process.env.EVENTS_BRIDGE_ENDPOINT,
+        BUS_NAME: process.env.EVENTS_BRIDGE_BUS_NAME,
+        CREATE_DEPLOYMENT_RULE: process.env.EVENTS_BRIDGE_CREATE_DEPLOYMENT_RULE,
+        CREATE_DEPLOYMENT_TARGET: process.env.EVENTS_BRIDGE_CREATE_DEPLOYMENT_TARGET
     }
 }

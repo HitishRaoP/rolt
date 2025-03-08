@@ -37,14 +37,14 @@ export const CreateDeployment = async (req: Request, res: Response): Promise<voi
                 accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
                 secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
             },
-            endpoint: UPLOAD_SERVER_CONSTANTS.SQS.SQS_ENDPOINT,
+            endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
         });
 
         /**
          * Get the Queue URL from the queue name
          */
         const getQueueURLCommand = new GetQueueUrlCommand({
-            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.SQS_QUEUE_NAME
+            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME
         })
         const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
 
