@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  upload-server:
+    container_name: fargate
+    build:
+      context: .
+      dockerfile: ./apps/upload-server/Dockerfile
+    restart: always
