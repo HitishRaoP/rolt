@@ -11,32 +11,14 @@ const eventBridgeClient = new EventBridgeClient({
     endpoint: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.ENDPOINT,
 });
 
-const sqsClient = new SQSClient({
-    region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
-    credentials: {
-        accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-        secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
-    },
-    endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
-});
-
 export const CreateRule = async () => {
     try {
-        const getQueueURLCommand = new GetQueueUrlCommand({
-            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME
-        })
-        const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
-
         const command = new PutRuleCommand({
             Name: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
             State: "ENABLED",
             EventBusName: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
             EventPattern: JSON.stringify({
                 source: ["aws.sqs"],
-                detail: {
-                    eventSource: ["sqs.amazonaws.com"],
-                    queueUrl: [QueueUrl],
-                },
             }),
         });
         const response = await eventBridgeClient.send(command);
