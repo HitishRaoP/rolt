@@ -41,7 +41,7 @@ const services: Record<ServiceKey, Service> = {
 };
 
 const main = async () => {
-    while (1) {
+    while (true) {
         const { serviceKey } = await inquirer.prompt<{
             serviceKey: ServiceKey | "exit";
         }>([
@@ -71,7 +71,7 @@ const handleService = async (serviceKey: ServiceKey) => {
 
     const actions: Record<string, ServiceAction | null> = { ...service.actions, Back: null };
 
-    while (1) {
+    while (true) {
         const { actionKey } = await inquirer.prompt<{ actionKey: string }>([
             {
                 type: "list",
