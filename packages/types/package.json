@@ -1,7 +1,0 @@
-{
-  "name": "@rolt/types",
-  "version": "1.0.0",
-  "devDependencies": {
-    "@rolt/typescript-config": "workspace:^"
-  }
-}
