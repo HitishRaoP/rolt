@@ -7,7 +7,7 @@
 		"start": "node dist/api/index.js",
 		"lint": "eslint .",
 		"check-types": "tsc --noEmit --pretty",
-		"prepare": "ts-node scripts/init.ts",
+		"bootstrap": "ts-node scripts/init.ts",
 		"script": "ts-node scripts/upload-script-main.ts"
 	},
 	"packageManager": "pnpm@10.6.1",
