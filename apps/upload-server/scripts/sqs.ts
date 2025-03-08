@@ -1,5 +1,5 @@
 import { CreateQueueCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { UPLOAD_SERVER_CONSTANTS } from "../constants/upload-server-constants";
+import { UPLOAD_SERVER_CONSTANTS } from "../src/constants/upload-server-constants";
 
 const sqsClient = new SQSClient({
     region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
@@ -13,7 +13,10 @@ const sqsClient = new SQSClient({
 export const CreateQueue = async () => {
     try {
         const command = new CreateQueueCommand({
-            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.SQS_QUEUE_NAME
+            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.SQS_QUEUE_NAME,
+            Attributes: {
+                FifoQueue: "true"
+            }
         })
         const response = await sqsClient.send(command);
         console.log({

@@ -1,5 +1,5 @@
 import { CreateBucketCommand, S3Client } from "@aws-sdk/client-s3";
-import { UPLOAD_SERVER_CONSTANTS } from "../constants/upload-server-constants";
+import { UPLOAD_SERVER_CONSTANTS } from "../src/constants/upload-server-constants";
 
 const s3Client = new S3Client({
     region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,

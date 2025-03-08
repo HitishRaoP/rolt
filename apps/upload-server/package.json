@@ -6,7 +6,9 @@
 		"build": "rm -rf dist && tsc",
 		"start": "node dist/api/index.js",
 		"lint": "eslint .",
-		"check-types": "tsc --noEmit --pretty"
+		"check-types": "tsc --noEmit --pretty",
+		"prepare": "ts-node scripts/init.ts",
+		"script": "ts-node scripts/upload-script-main.ts"
 	},
 	"packageManager": "pnpm@10.6.1",
 	"devDependencies": {
@@ -18,10 +20,12 @@
 		"@types/express-serve-static-core": "^5.0.6",
 		"eslint": "^9.22.0",
 		"globals": "^16.0.0",
+		"ts-node": "^10.9.2",
 		"tsx": "^4.19.3",
 		"typescript-eslint": "^8.26.0"
 	},
 	"dependencies": {
+		"@aws-sdk/client-ecr": "^3.758.0",
 		"@aws-sdk/client-s3": "^3.758.0",
 		"@aws-sdk/client-sqs": "^3.758.0",
 		"@rolt/schemas": "workspace:^",

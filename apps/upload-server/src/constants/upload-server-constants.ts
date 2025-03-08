@@ -1,3 +1,10 @@
+import { config } from "dotenv";
+import path from "path";
+
+config({
+    path: path.resolve(__dirname, "../", "../.env")
+})
+
 export const UPLOAD_SERVER_CONSTANTS = {
     PORT: process.env.PORT!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
@@ -14,5 +21,8 @@ export const UPLOAD_SERVER_CONSTANTS = {
     S3: {
         S3_BUCKET: process.env.S3_BUCKET!,
         S3_ENDPOINT: process.env.S3_ENDPOINT!
+    },
+    ECR: {
+        ECR_ENDPOINT: process.env.S3_ENDPOINT!
     }
 }
