@@ -1,16 +1,16 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import {
-    SQSClient,
-    SendMessageCommand,
-    SQSServiceException,
-    GetQueueUrlCommand
-} from "@aws-sdk/client-sqs";
-import { sendResponse } from "@rolt/utils";
-import { ZodError } from "zod";
-import { UPLOAD_SERVER_CONSTANTS } from "../constants/upload-server-constants";
-import { CreateDeploymentSchema } from "@rolt/schemas";
-import { nanoid } from "nanoid"
-import { CreateDeploymentResponse } from "@rolt/types"
+	SQSClient,
+	SendMessageCommand,
+	SQSServiceException,
+	GetQueueUrlCommand,
+} from '@aws-sdk/client-sqs';
+import { sendResponse } from '@rolt/utils';
+import { ZodError } from 'zod';
+import { UPLOAD_SERVER_CONSTANTS } from '../constants/upload-server-constants';
+import { CreateDeploymentSchema } from '@rolt/schemas';
+import { nanoid } from 'nanoid';
+import { CreateDeploymentResponse } from '@rolt/types/Deployment';
 
 /**
  * @description Handles the deployment request by validating input,
@@ -21,74 +21,77 @@ import { CreateDeploymentResponse } from "@rolt/types"
  *
  * @returns {Promise<void>}
  */
-export const CreateDeployment = async (req: Request, res: Response): Promise<void> => {
-    try {
-        /**
-         * Sanitize the input
-         */
-        const body = CreateDeploymentSchema.parse(req.body);
+export const CreateDeployment = async (
+	req: Request,
+	res: Response,
+): Promise<void> => {
+	try {
+		/**
+		 * Sanitize the input
+		 */
+		const body = CreateDeploymentSchema.parse(req.body);
 
-        /**
-         * Initialize the SQS client
-         */
-        const sqsClient = new SQSClient({
-            region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
-            credentials: {
-                accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-                secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
-            },
-            endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
-        });
+		/**
+		 * Initialize the SQS client
+		 */
+		const sqsClient = new SQSClient({
+			region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
+			credentials: {
+				accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
+				secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+			},
+			endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
+		});
 
-        /**
-         * Get the Queue URL from the queue name
-         */
-        const getQueueURLCommand = new GetQueueUrlCommand({
-            QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME
-        })
-        const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
+		/**
+		 * Get the Queue URL from the queue name
+		 */
+		const getQueueURLCommand = new GetQueueUrlCommand({
+			QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
+		});
+		const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
 
-        /**
-         * Send the message to the Queue URL obtained along with the Deployment ID
-         */
-        const response: CreateDeploymentResponse = {
-            ...body,
-            deploymentId: nanoid()
-        }
-        const sendMessageCommand = new SendMessageCommand({
-            MessageBody: JSON.stringify(response),
-            QueueUrl,
-            MessageGroupId: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME
-        });
-        await sqsClient.send(sendMessageCommand);
-        return sendResponse({
-            res,
-            statusCode: 200,
-            message: "Deployment request successfully queued.",
-            data: response
-        });
-    } catch (error) {
-        if (error instanceof ZodError) {
-            return sendResponse({
-                res,
-                statusCode: 400,
-                message: "Bad Request: Invalid input",
-                data: error.errors,
-            });
-        }
+		/**
+		 * Send the message to the Queue URL obtained along with the Deployment ID
+		 */
+		const response: CreateDeploymentResponse = {
+			...body,
+			deploymentId: nanoid(),
+		};
+		const sendMessageCommand = new SendMessageCommand({
+			MessageBody: JSON.stringify(response),
+			QueueUrl,
+			MessageGroupId: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
+		});
+		await sqsClient.send(sendMessageCommand);
+		return sendResponse({
+			res,
+			statusCode: 200,
+			message: 'Deployment request successfully queued.',
+			data: response,
+		});
+	} catch (error) {
+		if (error instanceof ZodError) {
+			return sendResponse({
+				res,
+				statusCode: 400,
+				message: 'Bad Request: Invalid input',
+				data: error.errors,
+			});
+		}
 
-        if (error instanceof SQSServiceException) {
-            return sendResponse({
-                res,
-                statusCode: 500,
-                message: `AWS SQS Error: ${(error as Error).message}`,
-            });
-        }
+		if (error instanceof SQSServiceException) {
+			return sendResponse({
+				res,
+				statusCode: 500,
+				message: `AWS SQS Error: ${(error as Error).message}`,
+			});
+		}
 
-        return sendResponse({
-            res,
-            statusCode: 500,
-            message: `Internal Server Error: ${(error as Error).message}`,
-        });
-    }
+		return sendResponse({
+			res,
+			statusCode: 500,
+			message: `Internal Server Error: ${(error as Error).message}`,
+		});
+	}
 };

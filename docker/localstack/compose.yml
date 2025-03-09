@@ -4,12 +4,10 @@ services:
     image: localstack/localstack-pro # required for Pro
     ports:
       - '127.0.0.1:4566:4566' # LocalStack Gateway
-      - '127.0.0.1:4510-4559:4510-4559' # external services port range
+      - '127.0.0.1:4510-4559:4510-4559' # External services port range
       - '127.0.0.1:443:443' # LocalStack HTTPS Gateway (Pro)
     environment:
-      # Activate LocalStack Pro: https://docs.localstack.cloud/getting-started/auth-token/
-      - LOCALSTACK_AUTH_TOKEN='ls-BIVoKUpE-6112-LAGu-tebi-8566XEbu07ef' # required for Pro
-      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN} # Fetch from .env file
       - DEBUG=${DEBUG:-0}
       - PERSISTENCE=${PERSISTENCE:-0}
     volumes:

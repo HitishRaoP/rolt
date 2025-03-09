@@ -1,7 +1,11 @@
 {
   "name": "@rolt/types",
   "version": "1.0.0",
-  "devDependencies": {
-    "@rolt/typescript-config": "workspace:^"
+  "main": "dist/index.js",
+  "license": "MIT",
+  "private": true,
+  "exports": {
+    "./Api" : "./src/Api.d.ts",
+    "./Deployment" : "./src/Deployment.d.ts"
   }
 }

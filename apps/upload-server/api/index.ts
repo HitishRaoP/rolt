@@ -1,3 +1,3 @@
-import app from "../src/upload-server"
+import app from '../src/upload-server';
 
-export default app
+export default app;
