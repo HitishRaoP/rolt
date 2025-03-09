@@ -1,5 +1,5 @@
 {
-  "name": "@rolt/upload-server",
+  "name": "@rolt/deployment-server",
   "version": "1.0.0",
   "main": "dist/api/index.js",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "check-types": "tsc --noEmit --pretty",
     "bootstrap": "ts-node scripts/bootstrap.ts",
-    "script": "ts-node scripts/upload-script-main.ts"
+    "script": "ts-node scripts/deployment-script-main.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
