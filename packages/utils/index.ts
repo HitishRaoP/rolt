@@ -1,1 +1,1 @@
-export { sendResponse } from "./src/api"
+export { sendResponse } from './src/api';
