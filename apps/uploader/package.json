@@ -1,8 +1,9 @@
 {
-  "name": "@rolt/upload-server",
+  "name": "@rolt/uploader",
   "version": "1.0.0",
   "main": "dist/api/index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "tsx watch api/index.ts",
     "build": "rm -rf dist && tsc",
@@ -13,19 +14,22 @@
   "private": true,
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@rolt/types": "*",
+    "@rolt/typescript-config": "*",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "eslint": "^9.22.0",
     "globals": "^16.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.3",
-    "typescript-eslint": "^8.26.0",
-    "@rolt/typescript-config": "*"
+    "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
+    "@rolt/utils": "*",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "@rolt/utils": "*"
+    "octokit": "^4.1.2"
   }
 }
