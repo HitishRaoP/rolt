@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  upload-server:
+    container_name: upload-server
+    build:
+      context: .
+      dockerfile: ./apps/upload-server/Dockerfile
+    restart: always
+    ports:
+      - 8082:8082
