@@ -26,5 +26,9 @@ export const UPLOADER_CONSTANTS = {
 	ECS: {
 		ENDPOINT: process.env.ECS_ENDPOINT!,
 		CLUSTER_NAME: process.env.ECS_CLUSTER_NAME!
-	}
+	},
+	SQS: {
+		ENDPOINT: process.env.SQS_ENDPOINT!,
+		QUEUE_NAME: process.env.SQS_QUEUE_NAME!,
+	},
 };
