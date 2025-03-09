@@ -1,6 +1,6 @@
 import { S3Client, PutObjectCommand, S3ServiceException } from "@aws-sdk/client-s3";
 import { Octokit } from "octokit";
-import { UPLOAD_SERVER_CONSTANTS } from "../constants/uploader-constants.js";
+import { UPLOADER_CONSTANTS } from "../constants/uploader-constants.js";
 import { CreateDeploymentResponse } from "@rolt/types/Deployment"
 
 /**
@@ -22,13 +22,13 @@ export class UploadService {
         this.deploymentDetails = deploymentDetails;
         this.octokit = new Octokit();
         this.s3Client = new S3Client({
-            region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
+            region: UPLOADER_CONSTANTS.AWS.REGION,
             forcePathStyle: true,
             credentials: {
-                accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-                secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+                accessKeyId: UPLOADER_CONSTANTS.AWS.ACCESS_KEY_ID,
+                secretAccessKey: UPLOADER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
             },
-            endpoint: UPLOAD_SERVER_CONSTANTS.S3.ENDPOINT,
+            endpoint: UPLOADER_CONSTANTS.S3.ENDPOINT,
         });
     }
 
@@ -66,14 +66,14 @@ export class UploadService {
             throw new Error("No zip file available for upload.");
         }
         const params = {
-            Bucket: UPLOAD_SERVER_CONSTANTS.S3.BUCKET,
+            Bucket: UPLOADER_CONSTANTS.S3.BUCKET,
             Key: `${this.deploymentDetails.deploymentId}.zip`,
             Body: this.zipBuffer,
             ContentType: "application/zip",
         };
 
         try {
-            console.log(`Uploading repository to S3 bucket: ${UPLOAD_SERVER_CONSTANTS.S3.BUCKET}`);
+            console.log(`Uploading repository to S3 bucket: ${UPLOADER_CONSTANTS.S3.BUCKET}`);
             await this.s3Client.send(new PutObjectCommand(params));
             console.log("Upload successful.");
         } catch (error) {

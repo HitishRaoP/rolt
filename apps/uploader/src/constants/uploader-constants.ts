@@ -9,7 +9,7 @@ config({
 	path: path.resolve(__dirname, '../', '../.env'),
 });
 
-export const UPLOAD_SERVER_CONSTANTS = {
+export const UPLOADER_CONSTANTS = {
 	DEV: {
 		PORT: process.env.PORT!,
 		FRONTEND_URL: process.env.FRONTEND_URL!,
@@ -23,4 +23,8 @@ export const UPLOAD_SERVER_CONSTANTS = {
 		BUCKET: process.env.S3_BUCKET!,
 		ENDPOINT: process.env.S3_ENDPOINT!,
 	},
+	ECS: {
+		ENDPOINT: process.env.ECS_ENDPOINT!,
+		CLUSTER_NAME: process.env.ECS_CLUSTER_NAME!
+	}
 };

@@ -24,7 +24,7 @@ export const DEPLOYMENT_SERVER_CONSTANTS = {
 		ENDPOINT: process.env.S3_ENDPOINT!,
 	},
 	ECR: {
-		ENDPOINT: process.env.S3_ENDPOINT!,
+		ENDPOINT: process.env.ECR_ENDPOINT!,
 		REPO_NAME: process.env.ECR_REPO_NAME!,
 	},
 	EVENTS_BRIDGE: {

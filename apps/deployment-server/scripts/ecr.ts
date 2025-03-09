@@ -1,4 +1,4 @@
-import { CreateRepositoryCommand, ECRClient } from '@aws-sdk/client-ecr';
+import { CreateRepositoryCommand, ECRClient, ListImagesCommand } from '@aws-sdk/client-ecr';
 import { DEPLOYMENT_SERVER_CONSTANTS } from '../src/constants/deployment-server-constants';
 
 const ecrClient = new ECRClient({
@@ -22,5 +22,21 @@ export const CreateECRRepository = async () => {
 		});
 	} catch (error) {
 		console.error('Error Creating Repository:', error);
+	}
+};
+
+export const ListECRImages = async () => {
+	try {
+		const command = new ListImagesCommand({
+			repositoryName: DEPLOYMENT_SERVER_CONSTANTS.ECR.REPO_NAME,
+		});
+		const response = await ecrClient.send(command);
+		console.log({
+			message: 'ECR Repository Images Retrieved Successfully',
+			response: JSON.stringify(response),
+		});
+	} catch (error) {
+		console.error('Error Listing Repository Images:', error);
+		throw error;
 	}
 };
