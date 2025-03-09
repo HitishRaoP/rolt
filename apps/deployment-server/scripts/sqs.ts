@@ -4,21 +4,21 @@ import {
 	GetQueueUrlCommand,
 	SQSClient,
 } from '@aws-sdk/client-sqs';
-import { UPLOAD_SERVER_CONSTANTS } from '../src/constants/upload-server-constants';
+import { DEPLOYMENT_SERVER_CONSTANTS } from '../src/constants/deployment-server-constants';
 
 const sqsClient = new SQSClient({
-	region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
+	region: DEPLOYMENT_SERVER_CONSTANTS.AWS.REGION,
 	credentials: {
-		accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-		secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+		accessKeyId: DEPLOYMENT_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
+		secretAccessKey: DEPLOYMENT_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
 	},
-	endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
+	endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
 });
 
 export const CreateQueue = async () => {
 	try {
 		const command = new CreateQueueCommand({
-			QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
+			QueueName: DEPLOYMENT_SERVER_CONSTANTS.SQS.QUEUE_NAME,
 			Attributes: {
 				FifoQueue: 'true',
 				ContentBasedDeduplication: 'true',
@@ -37,7 +37,7 @@ export const CreateQueue = async () => {
 export const DeleteQueue = async () => {
 	try {
 		const getQueueURLCommand = new GetQueueUrlCommand({
-			QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
+			QueueName: DEPLOYMENT_SERVER_CONSTANTS.SQS.QUEUE_NAME,
 		});
 		const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
 

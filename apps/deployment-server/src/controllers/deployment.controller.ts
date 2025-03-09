@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/client-sqs';
 import { sendResponse } from '@rolt/utils';
 import { ZodError } from 'zod';
-import { UPLOAD_SERVER_CONSTANTS } from '../constants/upload-server-constants';
+import { DEPLOYMENT_SERVER_CONSTANTS } from '../constants/deployment-server-constants';
 import { CreateDeploymentSchema } from '@rolt/schemas';
 import { nanoid } from 'nanoid';
 import { CreateDeploymentResponse } from '@rolt/types/Deployment';
@@ -35,19 +35,19 @@ export const CreateDeployment = async (
 		 * Initialize the SQS client
 		 */
 		const sqsClient = new SQSClient({
-			region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
+			region: DEPLOYMENT_SERVER_CONSTANTS.AWS.REGION,
 			credentials: {
-				accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-				secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+				accessKeyId: DEPLOYMENT_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
+				secretAccessKey: DEPLOYMENT_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
 			},
-			endpoint: UPLOAD_SERVER_CONSTANTS.SQS.ENDPOINT,
+			endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
 		});
 
 		/**
 		 * Get the Queue URL from the queue name
 		 */
 		const getQueueURLCommand = new GetQueueUrlCommand({
-			QueueName: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
+			QueueName: DEPLOYMENT_SERVER_CONSTANTS.SQS.QUEUE_NAME,
 		});
 		const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
 
@@ -61,7 +61,7 @@ export const CreateDeployment = async (
 		const sendMessageCommand = new SendMessageCommand({
 			MessageBody: JSON.stringify(response),
 			QueueUrl,
-			MessageGroupId: UPLOAD_SERVER_CONSTANTS.SQS.QUEUE_NAME,
+			MessageGroupId: DEPLOYMENT_SERVER_CONSTANTS.SQS.QUEUE_NAME,
 		});
 		await sqsClient.send(sendMessageCommand);
 		return sendResponse({

@@ -4,23 +4,23 @@ import {
 	PutRuleCommand,
 	PutTargetsCommand,
 } from '@aws-sdk/client-eventbridge';
-import { UPLOAD_SERVER_CONSTANTS } from '../src/constants/upload-server-constants';
+import { DEPLOYMENT_SERVER_CONSTANTS } from '../src/constants/deployment-server-constants';
 
 const eventBridgeClient = new EventBridgeClient({
-	region: UPLOAD_SERVER_CONSTANTS.AWS.REGION,
+	region: DEPLOYMENT_SERVER_CONSTANTS.AWS.REGION,
 	credentials: {
-		accessKeyId: UPLOAD_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-		secretAccessKey: UPLOAD_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+		accessKeyId: DEPLOYMENT_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
+		secretAccessKey: DEPLOYMENT_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
 	},
-	endpoint: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.ENDPOINT,
+	endpoint: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.ENDPOINT,
 });
 
 export const CreateRule = async () => {
 	try {
 		const command = new PutRuleCommand({
-			Name: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
+			Name: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
 			State: 'ENABLED',
-			EventBusName: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
+			EventBusName: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
 			EventPattern: JSON.stringify({
 				source: ['aws.sqs'],
 			}),
@@ -41,8 +41,8 @@ export const CreateTarget = async () => {
 		 * Command to get the Rule Arn
 		 */
 		const listRulesCommand = new ListRulesCommand({
-			NamePrefix: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
-			EventBusName: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
+			NamePrefix: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
+			EventBusName: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
 			Limit: 1,
 		});
 		const { Rules } = await eventBridgeClient.send(listRulesCommand);
@@ -51,11 +51,11 @@ export const CreateTarget = async () => {
 		 * Command to Create the target
 		 */
 		const createTargetCommand = new PutTargetsCommand({
-			Rule: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
-			EventBusName: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
+			Rule: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_RULE,
+			EventBusName: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.BUS_NAME,
 			Targets: [
 				{
-					Id: UPLOAD_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_TARGET,
+					Id: DEPLOYMENT_SERVER_CONSTANTS.EVENTS_BRIDGE.CREATE_DEPLOYMENT_TARGET,
 					Arn: Rules?.at(0)?.Arn,
 				},
 			],
