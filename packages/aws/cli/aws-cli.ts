@@ -1,5 +1,9 @@
 import inquirer from 'inquirer';
-import { createCluster, createTask } from '../src/ecs/aws-ecs';
+import { CreateCluster, createTask } from '../src/ecs/aws-ecs';
+import { CreateQueue, DeleteQueue } from '../src/sqs/aws-sqs';
+import { AWS_CONSTANTS } from '../src/constants/aws-constants';
+import { CreateECRRepository, ListECRImages } from '../src/ecr/aws-ecr';
+import { CreateBucket } from '../src/s3/aws-s3';
 
 type ServiceAction = () => Promise<void>;
 
@@ -8,16 +12,38 @@ type Service = {
     actions: Record<string, ServiceAction>;
 };
 
-type ServiceKey = 'ecs';
+type ServiceKey = 'ecs' | "sqs" | "ecr" | "s3";
 
 const services: Record<ServiceKey, Service> = {
+    ecr: {
+        name: "ECR",
+        actions: {
+            "Create ECR Repository": CreateECRRepository,
+            "List ECR Images": ListECRImages
+        }
+    },
     ecs: {
         name: 'ECS',
         actions: {
-            'Create ECS Cluster': createCluster,
+            'Create ECS Cluster': CreateCluster,
             "Create ECS Task": createTask
         },
     },
+    s3: {
+        name: "S3",
+        actions: {
+            "Create S3 Bucket": CreateBucket
+        }
+    },
+    sqs: {
+        name: "SQS",
+        actions: {
+            "Create Uploader Queue": () => CreateQueue({ QueueName: AWS_CONSTANTS.SQS.QUEUES.UPLOADER }),
+            "Create Deployer Queue": () => CreateQueue({ QueueName: AWS_CONSTANTS.SQS.QUEUES.DEPLOYER }),
+            "Delete Uploader Queue": () => DeleteQueue({ QueueName: AWS_CONSTANTS.SQS.QUEUES.UPLOADER }),
+            "Delete Deployer Queue": () => DeleteQueue({ QueueName: AWS_CONSTANTS.SQS.QUEUES.DEPLOYER })
+        }
+    }
 };
 
 const main = async () => {

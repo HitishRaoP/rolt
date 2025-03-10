@@ -27,7 +27,6 @@
     "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
-    "@aws-sdk/client-ecs": "^3.758.0",
     "@aws-sdk/client-s3": "^3.758.0",
     "@rolt/utils": "*",
     "cors": "^2.8.5",

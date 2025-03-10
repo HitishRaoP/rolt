@@ -18,4 +18,19 @@ export const AWS_CONSTANTS = {
 		UPLOADER_CONTAINER: process.env.ECS_UPLOADER_CONTAINER!,
 		UPLOADER_IMAGE: process.env.ECS_UPLOADER_IMAGE!
 	},
+	SQS: {
+		ENDPOINT: process.env.SQS_ENDPOINT!,
+		QUEUES: {
+			UPLOADER: process.env.SQS_QUEUES_UPLOADER!,
+			DEPLOYER: process.env.SQS_QUEUES_DEPLOYER!,
+		}
+	},
+	S3: {
+		BUCKET: process.env.S3_BUCKET!,
+		ENDPOINT: process.env.S3_ENDPOINT!,
+	},
+	ECR: {
+		ENDPOINT: process.env.ECR_ENDPOINT!,
+		REPO_NAME: process.env.ECR_REPO_NAME!,
+	},
 };

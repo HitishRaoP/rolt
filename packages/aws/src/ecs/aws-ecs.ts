@@ -10,7 +10,7 @@ const ecsClient = new ECSClient({
     endpoint: AWS_CONSTANTS.ECS.ENDPOINT,
 })
 
-export const createCluster = async () => {
+export const CreateCluster = async () => {
     try {
         const command = new CreateClusterCommand({
             clusterName: AWS_CONSTANTS.ECS.CLUSTER_NAME
