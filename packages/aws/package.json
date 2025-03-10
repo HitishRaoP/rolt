@@ -1,0 +1,19 @@
+{
+	"name": "@rolt/aws",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"build": "rm -rf dist && tsc",
+		"lint": "eslint .",
+		"check-types": "tsc --noEmit --pretty"
+	  },
+	"devDependencies": {
+		"@rolt/typescript-config": "*"
+	},
+	"dependencies": {
+		"@aws-sdk/client-ecs": "^3.758.0",
+		"inquirer": "^12.4.3"
+	}
+}

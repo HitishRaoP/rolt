@@ -1,5 +1,7 @@
 import inquirer from 'inquirer';
-import { createCluster, createTask } from './ecs.js';
+import { CreateBucket } from './s3';
+import { CreateQueue, DeleteQueue } from './sqs';
+import { CreateECRRepository, ListECRImages } from '../ecr/bootstrap-ecr';
 
 type ServiceAction = () => Promise<void>;
 
@@ -8,14 +10,25 @@ type Service = {
     actions: Record<string, ServiceAction>;
 };
 
-type ServiceKey = 'ecs';
+type ServiceKey = 's3' | 'sqs' | 'ecr';
 
 const services: Record<ServiceKey, Service> = {
-    ecs: {
-        name: 'ECS',
+    s3: {
+        name: 'S3',
+        actions: { 'Create Bucket': CreateBucket },
+    },
+    sqs: {
+        name: 'SQS',
         actions: {
-            'Create ECS Cluster': createCluster,
-            "Create ECS Task": createTask
+            'Create Queue': CreateQueue,
+            'Delete Queue': DeleteQueue,
+        },
+    },
+    ecr: {
+        name: 'ECR',
+        actions: {
+            'Create Repository': CreateECRRepository,
+            "List Images": ListECRImages
         },
     },
 };

@@ -1,19 +1,19 @@
 import { CreateClusterCommand, ECSClient, RegisterTaskDefinitionCommand, RegisterTaskDefinitionCommandInput } from "@aws-sdk/client-ecs";
-import { UPLOADER_CONSTANTS } from "../src/constants/uploader-constants.js";
+import { AWS_CONSTANTS } from "../constants/aws-constants"
 
 const ecsClient = new ECSClient({
-    region: UPLOADER_CONSTANTS.AWS.REGION,
+    region: AWS_CONSTANTS.AWS.REGION,
     credentials: {
-        accessKeyId: UPLOADER_CONSTANTS.AWS.ACCESS_KEY_ID,
-        secretAccessKey: UPLOADER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+        accessKeyId: AWS_CONSTANTS.AWS.ACCESS_KEY_ID,
+        secretAccessKey: AWS_CONSTANTS.AWS.SECRET_ACCESS_KEY,
     },
-    endpoint: UPLOADER_CONSTANTS.ECS.ENDPOINT,
+    endpoint: AWS_CONSTANTS.ECS.ENDPOINT,
 })
 
 export const createCluster = async () => {
     try {
         const command = new CreateClusterCommand({
-            clusterName: UPLOADER_CONSTANTS.ECS.CLUSTER_NAME
+            clusterName: AWS_CONSTANTS.ECS.CLUSTER_NAME
         })
         const response = await ecsClient.send(command)
         console.log({
@@ -28,12 +28,12 @@ export const createCluster = async () => {
 export const createTask = async (): Promise<void> => {
     try {
         const input: RegisterTaskDefinitionCommandInput = {
-            family: UPLOADER_CONSTANTS.ECS.UPLOADER_FAMILY,
+            family: AWS_CONSTANTS.ECS.UPLOADER_FAMILY,
             networkMode: "awsvpc",
             containerDefinitions: [
                 {
-                    name:  UPLOADER_CONSTANTS.ECS.UPLOADER_CONTAINER,
-                    image: UPLOADER_CONSTANTS.ECS.UPLOADER_IMAGE,
+                    name: AWS_CONSTANTS.ECS.UPLOADER_CONTAINER,
+                    image: AWS_CONSTANTS.ECS.UPLOADER_IMAGE,
                     essential: true,
                 }
             ],

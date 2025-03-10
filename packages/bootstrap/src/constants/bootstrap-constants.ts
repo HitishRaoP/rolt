@@ -5,7 +5,7 @@ config({
 	path: path.resolve(__dirname, '../', '../.env'),
 });
 
-export const DEPLOYMENT_SERVER_CONSTANTS = {
+export const BOOTSTRAP_CONSTANTS = {
 	DEV: {
 		PORT: process.env.PORT!,
 		FRONTEND_URL: process.env.FRONTEND_URL!,

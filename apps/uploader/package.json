@@ -10,8 +10,8 @@
     "start": "node dist/api/index.js",
     "lint": "eslint .",
     "check-types": "tsc --noEmit --pretty",
-    "bootstrap": "ts-node scripts/bootstrap.ts",
-    "script": "ts-node scripts/uploader-script.ts"
+    "bootstrap": "tsx scripts/bootstrap.ts",
+    "script": "tsx scripts/uploader-script.ts"
   },
   "private": true,
   "devDependencies": {

@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { createCluster, createTask } from './ecs.js';
+import { createCluster, createTask } from '../src/ecs/aws-ecs';
 
 type ServiceAction = () => Promise<void>;
 

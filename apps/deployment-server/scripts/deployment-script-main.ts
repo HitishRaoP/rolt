@@ -1,7 +1,6 @@
 import inquirer from 'inquirer';
 import { CreateBucket } from './s3';
 import { CreateQueue, DeleteQueue } from './sqs';
-import { CreateRule, CreateTarget } from './events-bridge';
 import { CreateECRRepository, ListECRImages } from './ecr';
 
 type ServiceAction = () => Promise<void>;
@@ -11,7 +10,7 @@ type Service = {
 	actions: Record<string, ServiceAction>;
 };
 
-type ServiceKey = 's3' | 'sqs' | 'events_bridge' | 'ecr';
+type ServiceKey = 's3' | 'sqs' | 'ecr';
 
 const services: Record<ServiceKey, Service> = {
 	s3: {
@@ -23,13 +22,6 @@ const services: Record<ServiceKey, Service> = {
 		actions: {
 			'Create Queue': CreateQueue,
 			'Delete Queue': DeleteQueue,
-		},
-	},
-	events_bridge: {
-		name: 'Events Bridge',
-		actions: {
-			'Create Rule': CreateRule,
-			'Create Target': CreateTarget,
 		},
 	},
 	ecr: {
