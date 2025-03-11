@@ -1,4 +1,9 @@
-import { CreateClusterCommand, ECSClient, RegisterTaskDefinitionCommand, RegisterTaskDefinitionCommandInput } from "@aws-sdk/client-ecs";
+import {
+    CreateClusterCommand,
+    ECSClient,
+    RegisterTaskDefinitionCommand,
+    RegisterTaskDefinitionCommandInput
+} from "@aws-sdk/client-ecs";
 import { AWS_CONSTANTS } from "../constants/aws-constants"
 
 const ecsClient = new ECSClient({
@@ -25,7 +30,7 @@ export const CreateCluster = async () => {
     }
 }
 
-export const createTask = async (): Promise<void> => {
+export const CreateTask = async (): Promise<void> => {
     try {
         const input: RegisterTaskDefinitionCommandInput = {
             family: AWS_CONSTANTS.ECS.UPLOADER_FAMILY,
@@ -35,6 +40,7 @@ export const createTask = async (): Promise<void> => {
                     name: AWS_CONSTANTS.ECS.UPLOADER_CONTAINER,
                     image: AWS_CONSTANTS.ECS.UPLOADER_IMAGE,
                     essential: true,
+                    environment:[]
                 }
             ],
             requiresCompatibilities: [

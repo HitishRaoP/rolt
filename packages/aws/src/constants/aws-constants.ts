@@ -33,4 +33,9 @@ export const AWS_CONSTANTS = {
 		ENDPOINT: process.env.ECR_ENDPOINT!,
 		REPO_NAME: process.env.ECR_REPO_NAME!,
 	},
+	IAM: {
+		ENDPOINT: process.env.IAM_ENDPOINT!,
+		UPLOADER_TRIGGER_ROLE: process.env.IAM_UPLOADER_TRIGGER_ROLE!,
+		VERSION: process.env.IAM_VERSION!
+	}
 };

@@ -7,10 +7,12 @@
 	"scripts": {
 		"build": "rm -rf dist && tsc",
 		"lint": "eslint .",
-		"check-types": "tsc --noEmit --pretty"
+		"check-types": "tsc --noEmit --pretty",
+		"package": "zip function.zip index.mjs node_modules  package.json"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.22.0",
+		"@rolt/types": "*",
 		"@rolt/typescript-config": "*",
 		"eslint": "^9.22.0",
 		"globals": "^16.0.0",
@@ -18,7 +20,11 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-ecs": "^3.758.0",
+		"@aws-sdk/client-lambda": "^3.758.0",
 		"aws-lambda": "^1.0.7",
-		"zip-a-folder": "^3.1.8"
+		"dotenv": "^16.4.7"
+	},
+	"installConfig": {
+		"hoistingLimits": "workspaces"
 	}
 }
