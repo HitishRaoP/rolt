@@ -1,4 +1,4 @@
-import { CreateRoleCommand, IAMClient, ListGroupsCommand } from "@aws-sdk/client-iam";
+import { CreateRoleCommand, IAMClient, ListGroupsCommand, ListRolesCommand } from "@aws-sdk/client-iam";
 import { AWS_CONSTANTS } from "../constants/aws-constants";
 
 const iamClient = new IAMClient(
@@ -37,3 +37,16 @@ export const CreateRole = async () => {
         console.log("Error Creating Role", error);
     }
 }
+
+export const ListRoles = async () => {
+    try {
+        const command = new ListRolesCommand({});
+        const response = await iamClient.send(command);
+        console.log({
+            message: "IAM Roles Listed Successfully",
+            roles: response.Roles
+        });
+    } catch (error) {
+        console.log("Error Listing Roles", error);
+    }
+};

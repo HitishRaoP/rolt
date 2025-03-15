@@ -4,7 +4,7 @@ import { CreateQueue, DeleteQueue } from '../src/sqs/aws-sqs';
 import { AWS_CONSTANTS } from '../src/constants/aws-constants';
 import { CreateECRRepository, ListECRImages } from '../src/ecr/aws-ecr';
 import { CreateBucket } from '../src/s3/aws-s3';
-import { CreateRole } from '../src/iam/aws-iam';
+import { CreateRole, ListRoles } from '../src/iam/aws-iam';
 
 type ServiceAction = () => Promise<void>;
 
@@ -48,7 +48,8 @@ const services: Record<ServiceKey, Service> = {
     iam: {
         name: "IAM",
         actions: {
-            "Create Role": CreateRole
+            "Create Role": CreateRole,
+            "List Roles" : ListRoles
         }
     }
 };

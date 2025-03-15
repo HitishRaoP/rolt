@@ -1,5 +1,7 @@
 import inquirer from 'inquirer';
-import { DeployLambda } from '../src/lambda/aws-lambda';
+import { createUploaderMapping, DeployLambda } from '../src/lambda/aws-lambda';
+import { LAMBDA_CONSTANTS } from '../src/constants/lambdas-constants';
+import path from 'path';
 
 type ServiceAction = () => Promise<void>;
 
@@ -12,11 +14,19 @@ type ServiceKey = "lambda";
 
 const services: Record<ServiceKey, Service> = {
     lambda: {
-        name: "ECR",
+        name: "Lambda",
         actions: {
-            "Deploy the uploader trigger" : DeployLambda
+            "Create Event Uploader Source Mapping": () => createUploaderMapping({
+                functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
+                eventSourceArn: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_QUEUE_ARN,
+            }),
+            "Deploy Uploader lambda": () => DeployLambda({
+                functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
+                roleArn: LAMBDA_CONSTANTS.AWS.LAMBDA_S3_ROLE_ARN,
+                ZipFilePath: path.resolve(__dirname, "")
+            })
         }
-    },
+    }
 };
 
 const main = async () => {

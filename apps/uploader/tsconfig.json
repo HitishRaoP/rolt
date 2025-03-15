@@ -4,6 +4,7 @@
         "rootDir": ".",
         "outDir": "dist",
         "esModuleInterop": true,
-        "module": "Node16"
+        "module": "NodeNext",
+        "moduleResolution": "nodenext"
      }
 }

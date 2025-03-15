@@ -10,6 +10,7 @@ export const LAMBDA_CONSTANTS = {
         SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY!,
         ACCESS_KEY_ID: process.env.ACCESS_KEY_ID!,
         REGION: process.env.REGION!,
+        LAMBDA_S3_ROLE_ARN: process.env.LAMBDA_S3_ROLE_ARN!
     },
     ECS: {
         ENDPOINT: process.env.ECS_ENDPOINT!,
@@ -20,5 +21,7 @@ export const LAMBDA_CONSTANTS = {
     },
     LAMBDA: {
         ENDPOINT: process.env.LAMBDA_ENDPOINT!,
+        UPLOADER_TRIGGER: process.env.LAMBDA_UPLOADER_TRIGGER!,
+        UPLOADER_QUEUE_ARN: process.env.LAMBDA_UPLOADER_QUEUE_ARN!
     }
 }

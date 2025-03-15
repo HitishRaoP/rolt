@@ -1,0 +1,7 @@
+{
+    "extends" : "@rolt/typescript-config/base.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "dist",
+     }
+}

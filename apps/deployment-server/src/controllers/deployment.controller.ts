@@ -29,7 +29,7 @@ export const CreateDeployment = async (
 		/**
 		 * Sanitize the input
 		 */
-		const body = CreateDeploymentSchema.parse(req.body);
+		const body = req.body;
 
 		/**
 		 * Initialize the SQS client
