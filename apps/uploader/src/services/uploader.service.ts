@@ -8,7 +8,7 @@ import { CreateDeploymentResponse } from "@rolt/types/Deployment"
  *
  * This class runs as a container on AWS Fargate and is responsible for:
  * 1. Downloading a GitHub repository as a zip file.
- * 2. Uploading the zip file to MinIO/S3 storage.
+ * 2. Uploading the zip file to S3 storage.
  *
  * Logging is used to track the progress and errors.
  */

@@ -1,5 +1,7 @@
 import {
     CreateClusterCommand,
+    DeleteClusterCommand,
+    DeregisterTaskDefinitionCommand,
     ECSClient,
     RegisterTaskDefinitionCommand,
     RegisterTaskDefinitionCommandInput
@@ -31,15 +33,13 @@ export const CreateCluster = async () => {
 }
 
 export const CreateTask = async (): Promise<void> => {
-    const CREATE_DEPLOYMENT_DATA = '{"owner":"HitishRaoP","repo":"rolt","ref":"main","deploymentId":"123"}';
 
     const environmentVariables = [
-        { name: 'CREATE_DEPLOYMENT_DATA', value: CREATE_DEPLOYMENT_DATA },
         { name: 'SECRET_ACCESS_KEY', value: 'test' },
         { name: 'ACCESS_KEY_ID', value: 'test' },
         { name: 'REGION', value: 'us-east-1' },
-        { name: 'S3_BUCKET', value: 'rolt' },
-        { name: 'S3_ENDPOINT', value: 'http://s3.localhost.localstack.cloud:4566' }
+        { name: 'S3_BUCKET', value: 'rolt-bucket' },
+        { name: 'S3_ENDPOINT', value: `http://host.docker.internal:4566` }
     ];
     try {
         const input: RegisterTaskDefinitionCommandInput = {
@@ -66,5 +66,36 @@ export const CreateTask = async (): Promise<void> => {
         });
     } catch (error) {
         console.error("Error Creating Task:", error);
+    }
+};
+
+export const DeleteTask = async () => {
+    try {
+        const command = new DeregisterTaskDefinitionCommand({
+            taskDefinition: "arn:aws:ecs:us-east-1:000000000000:task-definition/rolt-uploader:1",
+        });
+        const response = await ecsClient.send(command);
+        console.log({
+            message: "Task Deleted Successfully",
+            response,
+        });
+    } catch (error) {
+        console.error("Error Deleting Task:", error);
+    }
+};
+
+
+export const DeleteCluster = async () => {
+    try {
+        const command = new DeleteClusterCommand({
+            cluster: "rolt",
+        });
+        const response = await ecsClient.send(command);
+        console.log({
+            message: "ECS Cluster Deleted Successfully",
+            response,
+        });
+    } catch (error) {
+        console.error("Error Deleting Cluster:", error);
     }
 };

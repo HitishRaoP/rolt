@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import { CreateCluster, CreateTask } from '../src/ecs/aws-ecs';
+import { CreateCluster, CreateTask, DeleteCluster, DeleteTask } from '../src/ecs/aws-ecs';
 import { CreateQueue, DeleteQueue } from '../src/sqs/aws-sqs';
 import { AWS_CONSTANTS } from '../src/constants/aws-constants';
 import { CreateECRRepository, ListECRImages } from '../src/ecr/aws-ecr';
@@ -27,7 +27,9 @@ const services: Record<ServiceKey, Service> = {
         name: 'ECS',
         actions: {
             'Create ECS Cluster': CreateCluster,
-            "Create ECS Task": CreateTask
+            "Delete ECS Cluster": DeleteCluster,
+            "Create ECS Task": CreateTask,
+            "Delete ECS Task" : DeleteTask
         },
     },
     s3: {
