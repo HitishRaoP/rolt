@@ -1,11 +1,5 @@
 import { ECSClient, RunTaskCommand } from '@aws-sdk/client-ecs';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
-import { config } from 'dotenv';
-import path from 'path';
-
-config({
-    path: path.resolve(__dirname, './.env'),
-});
 
 export const LAMBDA_CONSTANTS = {
     AWS: {
@@ -48,7 +42,6 @@ const ecsClient = new ECSClient({
 async function processMessageAsync(message: SQSRecord) {
     try {
         console.log("Received SQS message:", message);
-        console.log(LAMBDA_CONSTANTS);
 
         const deploymentData = JSON.stringify(JSON.parse(message.body));
         const command = new RunTaskCommand({
@@ -57,7 +50,7 @@ async function processMessageAsync(message: SQSRecord) {
             launchType: "FARGATE",
             networkConfiguration: {
                 awsvpcConfiguration: {
-                    subnets: ['subnet-83eb0c4b07c8b0a2d'], // Ensure it's an array
+                    subnets: [LAMBDA_CONSTANTS.ECS.UPLOADER_SUBNETS],
                 },
             },
             overrides: {
@@ -78,43 +71,3 @@ async function processMessageAsync(message: SQSRecord) {
         console.error("Error running ECS task:", error);
     }
 }
-
-
-async function test() {
-    try {
-        console.log(LAMBDA_CONSTANTS);
-
-        const parsedMessage = JSON.parse("{\"owner\":\"HitishRaoP\",\"repo\":\"rolt\",\"ref\":\"main\",\"deploymentId\":\"123\"}");
-        const command = new RunTaskCommand({
-            cluster: LAMBDA_CONSTANTS.ECS.CLUSTER_NAME,
-            taskDefinition: LAMBDA_CONSTANTS.ECS.UPLOADER_TASK_ARN,
-            launchType: 'FARGATE',
-            networkConfiguration: {
-                awsvpcConfiguration: {
-                    subnets: [LAMBDA_CONSTANTS.ECS.UPLOADER_SUBNETS],
-                },
-            },
-            overrides: {
-                containerOverrides: [
-                    {
-                        name: LAMBDA_CONSTANTS.ECS.UPLOADER_CONTAINER,
-                        environment: [
-                            {
-                                name: "CREATE_DEPLOYMENT_DATA", value: "{\"owner\":\"HitishRaoP\",\"repo\":\"rolt\",\"ref\":\"main\",\"deploymentId\":\"123\"}"
-                            }
-                        ],
-                    },
-                ],
-            },
-        });
-        const response = await ecsClient.send(command);
-        console.log({
-            message: 'Lambda Function deployed successfully',
-            response,
-        });
-    } catch (error) {
-        console.error('An error occurred', error);
-    }
-}
-
-test()

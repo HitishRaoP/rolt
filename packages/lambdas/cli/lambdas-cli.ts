@@ -1,7 +1,6 @@
 import inquirer from 'inquirer';
 import { createUploaderMapping, DeployLambda } from '../src/lambda/aws-lambda';
 import { LAMBDA_CONSTANTS } from '../src/constants/lambdas-constants';
-import path from 'path';
 
 type ServiceAction = () => Promise<void>;
 
@@ -16,15 +15,17 @@ const services: Record<ServiceKey, Service> = {
     lambda: {
         name: "Lambda",
         actions: {
-            "Create Event Uploader Source Mapping": () => createUploaderMapping({
-                functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-                eventSourceArn: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_QUEUE_ARN,
-            }),
-            "Deploy Uploader lambda": () => DeployLambda({
-                functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-                roleArn: LAMBDA_CONSTANTS.AWS.LAMBDA_S3_ROLE_ARN,
-                ZipFilePath: path.resolve(__dirname, "")
-            })
+            "Deploy Uploader lambda": async () => {
+                await DeployLambda({
+                    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
+                    roleArn: LAMBDA_CONSTANTS.AWS.LAMBDA_S3_ROLE_ARN,
+                });
+            },
+            "Create Event Uploader Source Mapping": () =>
+                createUploaderMapping({
+                    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
+                    eventSourceArn: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_QUEUE_ARN,
+                }),
         }
     }
 };

@@ -1,7 +1,14 @@
-import { LambdaClient, CreateFunctionCommand, UpdateFunctionCodeCommand, CreateEventSourceMappingCommand, UpdateFunctionConfigurationCommand, LambdaServiceException, GetFunctionCommand } from "@aws-sdk/client-lambda";
-import { readFileSync } from "fs";
-import { LAMBDA_CONSTANTS } from "../constants/lambdas-constants";
-import path from "path";
+import { readFileSync } from 'fs';
+import path from 'path';
+import {
+    LambdaClient,
+    GetFunctionCommand,
+    UpdateFunctionCodeCommand,
+    UpdateFunctionConfigurationCommand,
+    CreateFunctionCommand,
+    CreateEventSourceMappingCommand
+} from "@aws-sdk/client-lambda";
+import { LAMBDA_CONSTANTS } from '../constants/lambdas-constants';
 
 const lambdaClient = new LambdaClient({
     region: LAMBDA_CONSTANTS.AWS.REGION,
@@ -14,31 +21,29 @@ const lambdaClient = new LambdaClient({
 
 export async function DeployLambda({
     functionName,
-    ZipFilePath,
     roleArn
 }: {
     functionName: string,
-    ZipFilePath: string,
     roleArn: string
 }) {
     try {
-        console.log(LAMBDA_CONSTANTS);
-
+        const ZipFilePath = path.resolve(__dirname, "../", "functions/", `${functionName}/`, "dist/", "index.zip")
         const functionCode = readFileSync(ZipFilePath);
 
-        // Try to get the function to check if it exists
         try {
             const getCommand = new GetFunctionCommand({ FunctionName: functionName });
             await lambdaClient.send(getCommand);
 
-            // Function exists, update both code and configuration
+            console.log(`Updating existing Lambda function: ${functionName}`);
+
+            // Update function code
             const updateCodeCommand = new UpdateFunctionCodeCommand({
                 FunctionName: functionName,
-                ZipFile: readFileSync(ZipFilePath),
+                ZipFile: functionCode,
             });
             await lambdaClient.send(updateCodeCommand);
 
-            // Update function configuration including environment variables
+            // Update function configuration
             const updateConfigCommand = new UpdateFunctionConfigurationCommand({
                 FunctionName: functionName,
                 Runtime: "nodejs22.x",
@@ -61,8 +66,10 @@ export async function DeployLambda({
 
             console.log("Lambda function code and configuration updated successfully!");
         } catch (getFunctionError: any) {
-            // Function doesn't exist, create a new one
             if (getFunctionError.name === "ResourceNotFoundException") {
+                console.log(`Lambda function "${functionName}" does not exist. Creating a new one...`);
+
+                // Create Lambda function
                 const createCommand = new CreateFunctionCommand({
                     FunctionName: functionName,
                     Runtime: "nodejs22.x",
@@ -93,6 +100,7 @@ export async function DeployLambda({
         console.error("Error deploying Lambda function:", error);
     }
 }
+
 export const createUploaderMapping = async ({
     functionName,
     eventSourceArn
@@ -116,8 +124,3 @@ export const createUploaderMapping = async ({
         console.log("Error Creating event source mapping for the uploader", error);
     }
 }
-DeployLambda({
-    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-    roleArn: LAMBDA_CONSTANTS.AWS.LAMBDA_S3_ROLE_ARN,
-    ZipFilePath: path.resolve(__dirname, "../", "../index.zip")
-})
