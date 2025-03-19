@@ -1,9 +1,9 @@
 {
-  "id": "1ee9ae43-00ae-49ca-b883-846337b9f915",
+  "id": "6900b023-558f-4699-87b3-c074f4936715",
   "license_format": "1",
-  "signature": "13c787230e020c3baad9788e11d57d18f17d8c8c8a0442e79fdefa28d1d505f8",
+  "signature": "4be93abd49a7298e9a65e16c9538a45492e6e3297e783112aaf3e03c412a3370",
   "license_type": "hobby",
-  "issue_date": "2025-03-14T21:33:25+00:00",
+  "issue_date": "2025-03-17T07:54:49+00:00",
   "expiry_date": "2026-03-08T12:36:14+00:00",
   "products": [
     {
@@ -24,9 +24,9 @@
     }
   ],
   "license_status": "ACTIVE",
-  "license_secret": "TFMxLjA618x2VBIj5lIWvhBLZKB3ZR2QXhajYzp8yQ3li62uf/kLWL8dkhaMjUPiQFG0gs2q",
-  "last_activated": "2025-03-15T15:31:05.320642Z",
-  "reactivate_after": "2025-03-16T15:31:05+00:00",
+  "license_secret": "TFMxLjA6cCeqYg+HI8B2zSOS1xCyF+4rhBVGclx0STRrFDs7PQrDRYzO3Ioyjs3wL4CvBnaq",
+  "last_activated": "2025-03-17T07:54:49.258821Z",
+  "reactivate_after": "2025-03-18T07:54:49+00:00",
   "offline_data": {
     "localstack_version": "4.2.1.dev33"
   }

@@ -5,6 +5,7 @@ import { AWS_CONSTANTS } from '../src/constants/aws-constants';
 import { CreateECRRepository, ListECRImages } from '../src/ecr/aws-ecr';
 import { CreateBucket } from '../src/s3/aws-s3';
 import { CreateRole, ListRoles } from '../src/iam/aws-iam';
+import { CreateBuildLogsTable, CreateProductionLogsTable } from '../src/dynamodb/aws-dynamodb';
 
 type ServiceAction = () => Promise<void>;
 
@@ -13,7 +14,7 @@ type Service = {
     actions: Record<string, ServiceAction>;
 };
 
-type ServiceKey = 'ecs' | "sqs" | "ecr" | "s3" | "iam";
+type ServiceKey = 'ecs' | "sqs" | "ecr" | "s3" | "iam" | "dynamodb";
 
 const services: Record<ServiceKey, Service> = {
     ecr: {
@@ -52,6 +53,13 @@ const services: Record<ServiceKey, Service> = {
         actions: {
             "Create Role": CreateRole,
             "List Roles" : ListRoles
+        }
+    },
+    dynamodb: {
+        name: "DynamoDB",
+        actions: {
+            "Create Build Logs Table" : CreateBuildLogsTable,
+            "Create Production Logs Table" : CreateProductionLogsTable,
         }
     }
 };

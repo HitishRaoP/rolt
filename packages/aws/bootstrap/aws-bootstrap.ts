@@ -1,4 +1,6 @@
 import { AWS_CONSTANTS } from "../src/constants/aws-constants";
+import { CreateBuildLogsTable, CreateProductionLogsTable } from "../src/dynamodb/aws-dynamodb";
+import { createVPC } from "../src/ec2/aws-ec2";
 import { CreateECRRepository } from "../src/ecr/aws-ecr";
 import { CreateCluster, CreateTask } from "../src/ecs/aws-ecs";
 import { CreateRole } from "../src/iam/aws-iam";
@@ -23,7 +25,12 @@ const bootstrapAWS = async () => {
                 QueueName: AWS_CONSTANTS.SQS.QUEUES.DEPLOYER
             }),
             //IAM
-            CreateRole()
+            CreateRole(),
+            //EC2
+            createVPC(),
+            //DYNAMO DB
+            CreateBuildLogsTable(),
+            CreateProductionLogsTable()
         ]);
         console.log('AWS Requirements are initialised Successfully');
     } catch (error) {

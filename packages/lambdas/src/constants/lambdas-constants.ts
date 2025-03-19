@@ -23,5 +23,8 @@ export const LAMBDA_CONSTANTS = {
         ENDPOINT: process.env.LAMBDA_ENDPOINT!,
         UPLOADER_TRIGGER: process.env.LAMBDA_UPLOADER_TRIGGER!,
         UPLOADER_QUEUE_ARN: process.env.LAMBDA_UPLOADER_QUEUE_ARN!
-    }
+    },
+    EC2: {
+		ENDPOINT: process.env.EC2_ENDPOINT!
+	}
 }

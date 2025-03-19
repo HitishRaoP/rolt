@@ -1,6 +1,9 @@
 import { ECSClient, RunTaskCommand } from '@aws-sdk/client-ecs';
 import { SQSEvent, SQSRecord } from 'aws-lambda';
 
+/**
+ * Configuration to be provided while updating or deploying the lambda function.
+ */
 export const LAMBDA_CONSTANTS = {
     AWS: {
         SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY!,

@@ -10,7 +10,7 @@ const ec2Client = new EC2Client({
     },
 });
 
-async function createVPC() {
+export async function createVPC() {
     try {
         const vpcResponse = await ec2Client.send(
             new CreateVpcCommand({
@@ -51,6 +51,3 @@ async function createVPC() {
         console.error("Error creating VPC:", error);
     }
 }
-
-
-createVPC();

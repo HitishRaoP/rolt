@@ -13,6 +13,7 @@
     "check-types": "turbo run check-types",
     "validate": "yarn format:write && yarn check-types && yarn lint && yarn build",
     "postinstall": "husky",
+    "bootstrap" : "turbo run bootstrap",
     "ionic:build": "npm run build",
     "ionic:serve": "npm run start"
   },

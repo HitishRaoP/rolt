@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand, S3ServiceException } from "@aws-sdk/client-s3";
-import { Octokit } from "octokit";
 import { UPLOADER_CONSTANTS } from "../constants/uploader-constants.js";
 import { CreateDeploymentResponse } from "@rolt/types/Deployment"
+import { GetQueueUrlCommand, SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
 /**
  * UploadService Class
@@ -14,13 +14,11 @@ import { CreateDeploymentResponse } from "@rolt/types/Deployment"
  */
 export class UploadService {
     private s3Client: S3Client;
-    private octokit: Octokit;
     private zipBuffer: Buffer | null = null;
     private deploymentDetails: CreateDeploymentResponse;
 
     constructor(deploymentDetails: CreateDeploymentResponse) {
         this.deploymentDetails = deploymentDetails;
-        this.octokit = new Octokit();
         this.s3Client = new S3Client({
             region: UPLOADER_CONSTANTS.AWS.REGION,
             forcePathStyle: true,
@@ -39,15 +37,12 @@ export class UploadService {
      */
     async downloadRepo(): Promise<void> {
         try {
-            const { url } = await this.octokit
-                .rest
-                .repos.downloadZipballArchive(this.deploymentDetails);
-            const response = await fetch(url);
+            const response = await fetch(`
+                git clone https://github.com/${this.deploymentDetails.owner}/${this.deploymentDetails.repo}.git`)
 
             if (!(response.ok)) {
                 throw new Error("Unexpected response type. Expected Buffer.");
             }
-
             const arrayBuffer = await response.arrayBuffer();
             this.zipBuffer = Buffer.from(arrayBuffer);
             console.log("Repository downloaded successfully.");
@@ -84,14 +79,46 @@ export class UploadService {
         }
     }
 
+    async pushToSQS() {
+        const sqsClient = new SQSClient({
+            region: UPLOADER_CONSTANTS.AWS.REGION,
+            credentials: {
+                accessKeyId: UPLOADER_CONSTANTS.AWS.ACCESS_KEY_ID,
+                secretAccessKey: UPLOADER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+            },
+            endpoint: UPLOADER_CONSTANTS.SQS.ENDPOINT,
+        });
+
+        /**
+         * Get the Queue URL
+         */
+        const getQueueURLCommand = new GetQueueUrlCommand({
+            QueueName: UPLOADER_CONSTANTS.SQS.QUEUES.DEPLOYER,
+        });
+        const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
+
+        /**
+         * Send the Message
+         */
+        const sendMessageCommand = new SendMessageCommand({
+            MessageBody: JSON.stringify(this.deploymentDetails),
+            QueueUrl,
+            MessageGroupId: UPLOADER_CONSTANTS.SQS.QUEUES.DEPLOYER,
+        });
+        await sqsClient.send(sendMessageCommand);
+    }
+
     /**
      * Orchestrates the repository download and upload process.
      */
     async upload(): Promise<void> {
         try {
             console.log("Starting upload process...");
-            await this.downloadRepo();
-            await this.putRepoToS3();
+            await Promise.all([
+                await this.downloadRepo(),
+                await this.putRepoToS3(),
+                await this.pushToSQS()
+            ]);
             console.log("Upload process completed successfully.");
         } catch (error) {
             throw new Error(`Upload process failed: ${(error as Error).message}`);

@@ -32,6 +32,8 @@ export const UPLOADER_CONSTANTS = {
 	},
 	SQS: {
 		ENDPOINT: process.env.SQS_ENDPOINT!,
-		QUEUE_NAME: process.env.SQS_QUEUE_NAME!,
+		QUEUES: {
+			DEPLOYER: process.env.SQS_QUEUES_DEPLOYER!
+		},
 	},
 };

@@ -1,6 +1,5 @@
 import inquirer from 'inquirer';
-import { createUploaderMapping, DeployLambda, UpdateLambda, UpdateLambdaConfiguration } from '../src/lambda/aws-lambda';
-import { LAMBDA_CONSTANTS } from '../src/constants/lambdas-constants';
+import { uploadToECR } from '../scripts/upload-to-ecr.js';
 
 type ServiceAction = () => Promise<void>;
 
@@ -9,33 +8,24 @@ type Service = {
     actions: Record<string, ServiceAction>;
 };
 
-type ServiceKey = "lambda";
+type ServiceKey = "uploader";
 
 const services: Record<ServiceKey, Service> = {
-    lambda: {
-        name: "Lambda",
+    uploader: {
+        name: "Uploader",
         actions: {
-            "Deploy Uploader lambda": async () => {
-                await DeployLambda({
-                    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-                    roleArn: LAMBDA_CONSTANTS.AWS.LAMBDA_S3_ROLE_ARN,
-                });
-            },
-            "Update Uploader lambda Code (Run the Update the configuration if any changes)": async () => {
-                await UpdateLambda({
-                    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-                });
-            },
-            "Update Uploader lambda Configuration": async () => {
-                await UpdateLambdaConfiguration({
-                    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-                });
-            },
-            "Create Event Uploader Source Mapping": () =>
-                createUploaderMapping({
-                    functionName: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_TRIGGER,
-                    eventSourceArn: LAMBDA_CONSTANTS.LAMBDA.UPLOADER_QUEUE_ARN,
-                }),
+            "Upload Image to ECR": async () => {
+                const { imageName } = await inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "imageName",
+                        message: "Enter the name of the image"
+                    }
+                ])
+                await uploadToECR({
+                    imageName
+                })
+            }
         }
     }
 };

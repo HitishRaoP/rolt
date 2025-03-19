@@ -1,0 +1,19 @@
+{
+	"name": "@rolt/log-server",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"private": true,
+	"devDependencies": {
+		"@rolt/typescript-config": "*",
+		"@types/cors": "^2.8.17",
+		"@types/express": "^5.0.0",
+		"tsx": "^4.19.3"
+	},
+	"dependencies": {
+		"@rolt/utils": "*",
+		"cors": "^2.8.5",
+		"dotenv": "^16.4.7",
+		"express": "^4.21.2"
+	}
+}
