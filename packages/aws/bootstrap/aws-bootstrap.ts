@@ -1,3 +1,4 @@
+import { CreateBuildGroup } from "../src/cloudwatch-logs/aws-cloudwatch-logs";
 import { AWS_CONSTANTS } from "../src/constants/aws-constants";
 import { CreateBuildLogsTable, CreateProductionLogsTable } from "../src/dynamodb/aws-dynamodb";
 import { createVPC } from "../src/ec2/aws-ec2";
@@ -25,12 +26,15 @@ const bootstrapAWS = async () => {
                 QueueName: AWS_CONSTANTS.SQS.QUEUES.DEPLOYER
             }),
             //IAM
-            CreateRole(),
+            CreateRole(AWS_CONSTANTS.IAM.UPLOADER_TRIGGER_ROLE),
+            CreateRole(AWS_CONSTANTS.IAM.CLOUDWATCH_KINESIS_ROLE),
             //EC2
             createVPC(),
             //DYNAMO DB
             CreateBuildLogsTable(),
-            CreateProductionLogsTable()
+            CreateProductionLogsTable(),
+            //Cloudwatch logs
+            CreateBuildGroup()
         ]);
         console.log('AWS Requirements are initialised Successfully');
     } catch (error) {

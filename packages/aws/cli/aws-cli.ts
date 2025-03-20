@@ -30,7 +30,7 @@ const services: Record<ServiceKey, Service> = {
             'Create ECS Cluster': CreateCluster,
             "Delete ECS Cluster": DeleteCluster,
             "Create ECS Task": CreateTask,
-            "Delete ECS Task" : DeleteTask
+            "Delete ECS Task": DeleteTask
         },
     },
     s3: {
@@ -51,15 +51,16 @@ const services: Record<ServiceKey, Service> = {
     iam: {
         name: "IAM",
         actions: {
-            "Create Role": CreateRole,
-            "List Roles" : ListRoles
+            "Create Upload Trigger Role": () => CreateRole(AWS_CONSTANTS.IAM.UPLOADER_TRIGGER_ROLE),
+            "Create Cloudwatch to kinesis Role": () => CreateRole(AWS_CONSTANTS.IAM.CLOUDWATCH_KINESIS_ROLE),
+            "List Roles": ListRoles
         }
     },
     dynamodb: {
         name: "DynamoDB",
         actions: {
-            "Create Build Logs Table" : CreateBuildLogsTable,
-            "Create Production Logs Table" : CreateProductionLogsTable,
+            "Create Build Logs Table": CreateBuildLogsTable,
+            "Create Production Logs Table": CreateProductionLogsTable,
         }
     }
 };

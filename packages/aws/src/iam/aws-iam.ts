@@ -12,10 +12,10 @@ const iamClient = new IAMClient(
     }
 );
 
-export const CreateRole = async () => {
+export const CreateRole = async (RoleName: string) => {
     try {
         const command = new CreateRoleCommand({
-            RoleName: AWS_CONSTANTS.IAM.UPLOADER_TRIGGER_ROLE,
+            RoleName,
             AssumeRolePolicyDocument: JSON.stringify({
                 Version: AWS_CONSTANTS.IAM.VERSION,
                 Statement: [
