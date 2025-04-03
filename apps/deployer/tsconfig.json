@@ -3,5 +3,8 @@
     "compilerOptions": {
         "rootDir": ".",
         "outDir": "dist",
+        "esModuleInterop": true,
+        "module": "NodeNext",
+        "moduleResolution": "nodenext"
      }
 }

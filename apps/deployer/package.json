@@ -1,16 +1,39 @@
 {
-	"name": "@rolt/deployer",
-	"version": "1.0.0",
-	"main": "index.js",
-	"license": "MIT",
-	"private": true,
-	"devDependencies": {
-		"@rolt/typescript-config": "*",
-		"@rolt/types": "*"
-	},
-	"scripts": {
-		"prebuild": "del /q dist",
-		"build": "esbuild src/nextjs/earnings/page.js --bundle --minify --sourcemap --platform=node --target=es2020 --outfile=index.js",
-		"postbuild": "cd dist && 7z a -tzip index.zip index.js*"
-	}
+  "name": "@rolt/deployer",
+  "version": "1.0.0",
+  "main": "dist/api/index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch api/index.ts",
+    "build": "rm -rf dist && tsc",
+    "start": "node dist/api/index.js",
+    "lint": "eslint .",
+    "check-types": "tsc --noEmit --pretty",
+    "cli": "tsx cli/deployer-cli.ts",
+    "fuck" : "tsx src/services/deployer.service.ts"
+  },
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@rolt/types": "*",
+    "@rolt/typescript-config": "*",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "eslint": "^9.22.0",
+    "globals": "^16.0.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript-eslint": "^8.26.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.758.0",
+    "@aws-sdk/client-sqs": "^3.758.0",
+    "@rolt/utils": "*",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "inquirer": "^12.5.0",
+    "octokit": "^4.1.2"
+  }
 }

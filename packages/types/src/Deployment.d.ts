@@ -2,6 +2,8 @@ export type CreateDeployment = {
 	owner: string;
 	repo: string;
 	ref: string;
+	buildCommand?: string;
+	startCommand?: string;
 };
 
 export type CreateDeploymentResponse = CreateDeployment & {
