@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "check-types": "tsc --noEmit --pretty",
     "cli": "tsx cli/deployer-cli.ts",
-    "fuck" : "tsx src/services/deployer.service.ts"
+    "fuck": "tsx src/services/deployer.service.ts"
   },
   "private": true,
   "devDependencies": {
@@ -27,6 +27,7 @@
     "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
+    "@aws-sdk/client-codebuild": "^3.781.0",
     "@aws-sdk/client-s3": "^3.758.0",
     "@aws-sdk/client-sqs": "^3.758.0",
     "@rolt/utils": "*",

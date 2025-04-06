@@ -1,36 +1,23 @@
-FROM node:18-alpine AS base
+ARG NODE_VERSION=22.14.0
 
-FROM base AS builder
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk update
-RUN apk add --no-cache libc6-compat
-# Set working directory
-WORKDIR /app
-RUN yarn global add turbo
-COPY . .
-RUN turbo prune @rolt/uploader --docker
+FROM node:${NODE_VERSION}-alpine
 
-# Add lockfile and package.json's of isolated subworkspace
-FROM base AS installer
-RUN apk update
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
+# Install git for cloning
+RUN apk add --no-cache git
 
-# First install dependencies (as they change less often)
-COPY --from=builder /app/out/json/ .
-RUN yarn install
+ENV NODE_ENV=production
 
-# Build the project and its dependencies
-COPY --from=builder /app/out/full/ .
-RUN yarn turbo build
+# Runtime ENV vars for ECS or docker run
+ENV OWNER=""
+ENV REPO=""
+ENV REF="main"
 
-FROM base AS runner
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Don't run production as root
-RUN addgroup --system --gid 1001 expressjs
-RUN adduser --system --uid 1001 expressjs
-USER expressjs
-COPY --from=installer /app .
+RUN npm i -g pnpm
+# Put entrypoint outside app folder
+COPY entrypoint.sh /entrypoint.sh
 
-CMD node apps/uploader/dist/api/index.js
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -9,7 +9,7 @@ config({
 	path: path.resolve(__dirname, '../', '../.env'),
 });
 
-export const UPLOADER_CONSTANTS = {
+export const DEPLOYER_CONSTANTS = {
 	DEV: {
 		PORT: process.env.PORT!,
 		FRONTEND_URL: process.env.FRONTEND_URL!,
@@ -17,11 +17,18 @@ export const UPLOADER_CONSTANTS = {
 	AWS: {
 		SECRET_ACCESS_KEY: process.env.SECRET_ACCESS_KEY!,
 		ACCESS_KEY_ID: process.env.ACCESS_KEY_ID!,
+		ACCOUNT_ID: process.env.ACCOUNT_ID!,
 		REGION: process.env.REGION!,
 	},
 	S3: {
 		BUCKET: process.env.S3_BUCKET!,
 		ENDPOINT: process.env.S3_ENDPOINT!,
+	},
+	ECR:{
+		REPO_NAME: process.env.ECR_REPO_NAME!
+	},
+	CODE_BUILD: {
+		ENDPOINT: process.env.CODE_BUILD_ENDPOINT!
 	},
 	ECS: {
 		ENDPOINT: process.env.ECS_ENDPOINT!,

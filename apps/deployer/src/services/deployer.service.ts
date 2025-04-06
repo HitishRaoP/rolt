@@ -1,104 +1,94 @@
-import { exec } from "child_process";
-import { promisify } from "util";
-import { UPLOADER_CONSTANTS } from "../constants/deployer-constants.js";
-import { CreateDeploymentResponse } from "@rolt/types/Deployment";
-import fs from "fs";
-import path from "path";
+import { CodeBuildClient, StartBuildCommand } from "@aws-sdk/client-codebuild";
+import { DEPLOYER_CONSTANTS } from "../constants/deployer-constants.js";
 
-const execAsync = promisify(exec);
-
+/**
+ * Deployment Service
+ *
+ * **When the deployment is created FIRST TIME.**
+ * 1. User Hits the deployment server ```POST /deployment```.
+ * 2. Code Build creates an image using the source.
+ * 3. The image of the project is pushed to ECR.
+ * 4. Code Build triggers EKS
+ * 5. EKS Deploys the image as a POD.
+ * 6. A Github Webhook should be setup for that repo.
+ */
 export class DeployService {
-    private deploymentDetails: CreateDeploymentResponse;
-    private repoPath: string;
+    private deploymentId: string;
+    private owner: string;
+    private repo: string;
+    private ref: string;
+    private codeBuildClient: CodeBuildClient;
 
-    constructor(deploymentDetails: CreateDeploymentResponse) {
-        this.deploymentDetails = deploymentDetails;
-        this.repoPath = path.join("./tmp1", this.deploymentDetails.deploymentId);
+    constructor(deploymentDetails: { owner: string, repo: string, ref: string, deploymentId: string }) {
+        this.deploymentId = deploymentDetails.deploymentId;
+        this.owner = deploymentDetails.owner;
+        this.repo = deploymentDetails.repo;
+        this.ref = deploymentDetails.ref;
+        this.codeBuildClient = new CodeBuildClient({
+            region: DEPLOYER_CONSTANTS.AWS.REGION,
+            endpoint: DEPLOYER_CONSTANTS.CODE_BUILD.ENDPOINT,
+            credentials: {
+                accessKeyId: DEPLOYER_CONSTANTS.AWS.ACCESS_KEY_ID,
+                secretAccessKey: DEPLOYER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
+            },
+        })
     }
 
-    /**
-     * Clone the repository from GitHub
-     */
-    async downloadRepo(): Promise<void> {
-        try {
-            console.log(`Cloning repository: ${this.deploymentDetails.repo}`);
-            await execAsync(`git clone --branch ${this.deploymentDetails.ref} https://github.com/${this.deploymentDetails.owner}/${this.deploymentDetails.repo}.git ${this.repoPath}`);
-            console.log("Repository cloned successfully.");
-        } catch (error) {
-            throw new Error(`Failed to clone repository: ${(error as Error).message}`);
-        }
+    async triggerCodeBuild(): Promise<void> {
+        const imageTag = `${DEPLOYER_CONSTANTS.AWS.ACCOUNT_ID}.dkr.ecr.${DEPLOYER_CONSTANTS.AWS.REGION}.amazonaws.com/${DEPLOYER_CONSTANTS.ECR.REPO_NAME}:${this.deploymentId}`;
+
+        console.log(`Starting CodeBuild for repo ${this.repo}...`);
+        const command = new StartBuildCommand({
+            projectName: "UserDeploymentsBuild",
+            environmentVariablesOverride: [
+                { name: "REPO_OWNER", value: this.owner, type: "PLAINTEXT" },
+                { name: "REPO_NAME", value: this.repo, type: "PLAINTEXT" },
+                { name: "REPO_BRANCH", value: this.ref, type: "PLAINTEXT" },
+                { name: "IMAGE_TAG", value: imageTag, type: "PLAINTEXT" },
+            ],
+        });
+
+        await this.codeBuildClient.send(command);
+        console.log("CodeBuild triggered successfully.");
     }
 
-    /**
-     * Install dependencies using npm or yarn
-     */
-    async installDependencies(): Promise<void> {
-        try {
-            console.log("Installing dependencies...");
-            await execAsync(`cd ${this.repoPath} && npm install`);
-            console.log("Dependencies installed.");
-        } catch (error) {
-            throw new Error(`Failed to install dependencies: ${(error as Error).message}`);
-        }
+    async deployToEKS(): Promise<void> {
+        console.log(`Updating Kubernetes deployment for ${this.deploymentId}...`);
+
+        const deploymentYaml = `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-${this.deploymentId}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deployment-${this.deploymentId}
+  template:
+    metadata:
+      labels:
+        app: deployment-${this.deploymentId}
+    spec:
+      containers:
+      - name: app
+        image: ${DEPLOYER_CONSTANTS.AWS.ACCOUNT_ID}.dkr.ecr.${DEPLOYER_CONSTANTS.AWS.REGION}.amazonaws.com/${DEPLOYER_CONSTANTS.ECR.REPO_NAME}:${this.deploymentId}
+        ports:
+        - containerPort: 3000
+`;
+
+        // Apply Kubernetes YAML using EKS SDK (requires additional setup)
+        console.log("Deployment YAML:");
+        console.log(deploymentYaml);
     }
 
-    /**
-     * Build the project if a build script exists
-     */
-    async buildProject(): Promise<void> {
-        try {
-            const packageJsonPath = path.join(this.repoPath, "package.json");
-            if (fs.existsSync(packageJsonPath)) {
-                const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"));
-                if (packageJson.scripts?.build) {
-                    console.log("Building project...");
-                    await execAsync(`cd ${this.repoPath} && npm run build`);
-                    console.log("Project built successfully.");
-                } else {
-                    console.log("No build script found. Skipping build.");
-                }
-            }
-        } catch (error) {
-            throw new Error(`Failed to build project: ${(error as Error).message}`);
-        }
-    }
-
-    /**
-     * Start the project using npm start or a custom command
-     */
-    async startProject(): Promise<void> {
-        try {
-            const startCommand = this.deploymentDetails.startCommand || "npm start";
-            console.log(`Starting project using: ${startCommand}`);
-            await execAsync(`cd ${this.repoPath} && ${startCommand}`);
-            console.log("Project started successfully.");
-        } catch (error) {
-            throw new Error(`Failed to start project: ${(error as Error).message}`);
-        }
-    }
-
-    /**
-     * Orchestrates the deployment process
-     */
     async deploy(): Promise<void> {
         try {
-            console.log("Starting deployment...");
-            await this.downloadRepo();
-            await this.installDependencies();
-            await this.buildProject();
-            await this.startProject();
-            console.log("Deployment completed successfully.");
+            await this.triggerCodeBuild();
+            await this.deployToEKS();
+            console.log("Deployment process completed successfully.");
         } catch (error) {
-            throw new Error(`Deployment failed: ${(error as Error).message}`);
+            console.error("Deployment failed:", error);
         }
     }
 }
-
-
-new DeployService(
-    {
-        owner: "HitishRaoP",
-        repo: "nextjs-sample",
-        ref: "main",
-        deploymentId: "123"
-    }).deploy();
