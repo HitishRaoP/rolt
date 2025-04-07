@@ -7,6 +7,10 @@ provider "aws" {
 
   endpoints {
     ecr = var.localstack_endpoint
+    ecs = var.localstack_endpoint
+    sqs = var.localstack_endpoint
+    ec2 = var.localstack_endpoint
+    dynamodb = var.localstack_endpoint
   }
 }
 
@@ -20,17 +24,29 @@ resource "aws_ecr_repository" "rolt" {
 
 resource "aws_dynamodb_table" "build_logs" {
   name = "build_logs"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key = "deploymentId"
+  attribute {
+    name = "deploymentId"
+    type = "S"
+  }
 }
 
 resource "aws_dynamodb_table" "production_logs" {
   name = "production_logs"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key = "deploymentId"
+  attribute {
+    name = "deploymentId"
+    type = "S"
+  }
 }
 
 resource "aws_vpc" "rolt_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
     name = "rolt-vpc"
-    resource : "vpc"
+    resource = "vpc"
   }
 }
 
