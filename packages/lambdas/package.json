@@ -5,11 +5,11 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"build": "rm -rf dist && tsc",
 		"lint": "eslint .",
 		"check-types": "tsc --noEmit --pretty",
 		"cli" : "tsx cli/lambdas-cli.ts",
-		"bootstrap" : "tsx bootstrap/lambdas-bootstrap"
+		"bootstrap" : "tsx bootstrap/lambdas-bootstrap",
+		"build": "sh scripts/index.sh"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.22.0",

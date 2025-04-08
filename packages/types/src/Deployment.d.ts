@@ -2,6 +2,7 @@ export type CreateDeployment = {
 	owner: string;
 	repo: string;
 	ref: string;
+	url?: string;
 	buildCommand?: string;
 	startCommand?: string;
 };

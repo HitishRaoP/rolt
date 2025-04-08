@@ -101,15 +101,24 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_lambda_function" "deployer_trigger" {
-  filename      = "${path.module}/../packages/lambdas/function.zip"
-  function_name = "deployer_trigger"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "index.handler"
+  filename         = "${path.module}/../packages/lambdas/src/functions/uploader-trigger/dist/function.zip"
+  function_name    = "deployer_trigger"
+  role             = aws_iam_role.iam_for_lambda.arn
+  handler          = "index.handler"
   source_code_hash = data.archive_file.lambda.output_base64sha256
-  runtime = "nodejs18.x"
+  runtime          = "nodejs18.x"
   environment {
     variables = {
-      foo = "bar"
+      CLUSTER_NAME       = aws_ecs_cluster.rolt.name
+      ENDPOINT           = var.localstack_endpoint
+      UPLOADER_CONTAINER = aws_ecs_task_definition.deployer_task.container_definitions[0].name
+      UPLOADER_TASK_ARN  = aw
     }
   }
+}
+
+resource "aws_lambda_event_source_mapping" "deployer_mapping" {
+  function_name    = aws_lambda_function.deployer_trigger.function_name
+  event_source_arn = aws_sqs_queue.deployer_queue.arn
+  enabled          = true
 }
