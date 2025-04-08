@@ -1,7 +1,23 @@
 #!/bin/sh
-export NODE_ENV=production
-
 cd /usr/src/app
+
+# Extract OWNER and REPO from URL if it's set
+if [ -n "$URL" ]; then
+  echo "Parsing GitHub URL: $URL"
+
+  # Regex-safe way to extract owner/repo from URL
+  OWNER_REPO=$(echo "$URL" | sed -E 's|https://github.com/([^/]+)/([^/.]+).*|\1 \2|')
+  OWNER=$(echo "$OWNER_REPO" | cut -d' ' -f1)
+  REPO=$(echo "$OWNER_REPO" | cut -d' ' -f2)
+
+  echo "Extracted OWNER: $OWNER"
+  echo "Extracted REPO: $REPO"
+fi
+
+if [ -z "$OWNER" ] || [ -z "$REPO" ]; then
+  echo "ERROR: OWNER and REPO must be set, either directly or via URL."
+  exit 1
+fi
 
 if [ -z "$(ls -A)" ]; then
   echo "Cloning repo https://github.com/${OWNER}/${REPO}.git at branch ${REF}..."
@@ -19,7 +35,6 @@ fi
 if [ -f "package.json" ]; then
   echo "Detecting package manager..."
 
-  # Auto-detect package manager based on lock files
   if [ -f "pnpm-lock.yaml" ]; then
     echo "pnpm detected"
     PACKAGE_MANAGER="pnpm"
@@ -40,7 +55,7 @@ if [ -f "package.json" ]; then
   elif [ "$PACKAGE_MANAGER" = "yarn" ]; then
     yarn install
   else
-    npm ci
+    npm install
   fi
 
   echo "Building the app using ${PACKAGE_MANAGER}..."

@@ -1,0 +1,12 @@
+services:
+  delpoyer:
+    build:
+      context: .
+    environment:
+      - OWNER=username
+      - REPO=my-repo
+      - REF=main
+      # Or optionally use the full URL instead:
+      # - URL=https://github.com/username/my-repo
+    ports:
+      - "3000:3000"
