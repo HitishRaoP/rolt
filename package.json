@@ -13,9 +13,12 @@
     "check-types": "turbo run check-types",
     "validate": "yarn format:write && yarn check-types && yarn lint && yarn build",
     "postinstall": "husky",
-    "bootstrap" : "turbo run bootstrap",
+    "bootstrap": "turbo run bootstrap",
     "ionic:build": "npm run build",
-    "ionic:serve": "npm run start"
+    "ionic:serve": "npm run start",
+    "tf:init": "cd terraform && terraform init",
+    "tf:plan": "cd terraform && terraform plan",
+    "tf:apply": "cd terraform && terraform apply -auto-approve"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
@@ -32,7 +35,10 @@
   },
   "packageManager": "yarn@1.22.22",
   "workspaces": {
-    "packages": ["packages/*", "apps/*"],
+    "packages": [
+      "packages/*",
+      "apps/*"
+    ],
     "nohoist": [
       "**/lambdas",
       "**/lambdas/**"
