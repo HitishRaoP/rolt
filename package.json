@@ -16,7 +16,7 @@
     "bootstrap": "turbo run bootstrap",
     "ionic:build": "npm run build",
     "ionic:serve": "npm run start",
-    "scripts" : "sh scripts/index.sh"
+    "scripts": "sh scripts/index.sh"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
@@ -42,5 +42,8 @@
       "**/lambdas/**"
     ]
   },
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "dependencies": {
+    "smee-client": "^3.1.1"
+  }
 }

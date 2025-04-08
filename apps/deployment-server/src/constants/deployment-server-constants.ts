@@ -1,5 +1,8 @@
 import { config } from 'dotenv';
 import path from 'path';
+import { cwd } from 'process';
+
+const __dirname = cwd();
 
 config({
 	path: path.resolve(__dirname, '../', '../.env'),

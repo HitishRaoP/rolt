@@ -7,7 +7,7 @@ import {
 } from '@aws-sdk/client-sqs';
 import { sendResponse } from '@rolt/utils';
 import { ZodError } from 'zod';
-import { DEPLOYMENT_SERVER_CONSTANTS } from '../constants/deployment-server-constants';
+import { DEPLOYMENT_SERVER_CONSTANTS } from '../constants/deployment-server-constants.js';
 import { CreateDeploymentSchema } from '@rolt/schemas';
 import { nanoid } from 'nanoid';
 import { CreateDeploymentResponse } from '@rolt/types/Deployment';

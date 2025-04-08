@@ -36,3 +36,14 @@ echo "Applying full Terraform configuration..."
 terraform -chdir="$TERRAFORM_DIR" apply -auto-approve
 
 echo "Deployment complete."
+
+
+############################
+# EXPOST 8081/api/github/webhooks
+############################
+WEBHOOK_URL="http://localhost:8081/webhooks"
+SMEE_URL="https://smee.io/nsg1pmrwtyJxSaxe"
+
+echo "Exposing $WEBHOOK_URL via $SMEE_URL"
+yarn smee -u "$SMEE_URL" -t "$WEBHOOK_URL"
+echo "Listening for GitHub Webhooks"
