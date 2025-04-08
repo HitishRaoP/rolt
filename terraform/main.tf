@@ -4,6 +4,7 @@ provider "aws" {
   access_key                  = var.aws_access_key
   skip_credentials_validation = true
   skip_requesting_account_id  = true
+  skip_metadata_api_check     = true
 
   endpoints {
     ecr      = var.localstack_endpoint
@@ -11,6 +12,8 @@ provider "aws" {
     sqs      = var.localstack_endpoint
     ec2      = var.localstack_endpoint
     dynamodb = var.localstack_endpoint
+    iam      = var.localstack_endpoint
+    lambda   = var.localstack_endpoint
   }
 }
 
@@ -67,13 +70,13 @@ resource "aws_ecs_task_definition" "deployer_task" {
   family                   = "deployer_task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  container_definitions = [
+  container_definitions = jsonencode([
     {
-      name      = "deployer"
+      name      = var.deployer_container
       image     = var.deployer_image
       essential = true
     }
-  ]
+  ])
 }
 
 data "aws_iam_policy_document" "assume_role" {
@@ -96,23 +99,27 @@ resource "aws_iam_role" "iam_for_lambda" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "index.js"
-  output_path = "function.zip"
+  source_file = "${path.module}/../packages/lambdas/src/deployer-trigger/dist/index.js"
+  output_path = "${path.module}/../packages/lambdas/src/deployer-trigger/dist/function.zip"
 }
 
 resource "aws_lambda_function" "deployer_trigger" {
-  filename         = "${path.module}/../packages/lambdas/src/functions/uploader-trigger/dist/function.zip"
+  filename         = data.archive_file.lambda.output_path
   function_name    = "deployer_trigger"
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "index.handler"
   source_code_hash = data.archive_file.lambda.output_base64sha256
-  runtime          = "nodejs18.x"
+  runtime          = "nodejs22.x"
   environment {
     variables = {
-      CLUSTER_NAME       = aws_ecs_cluster.rolt.name
-      ENDPOINT           = var.localstack_endpoint
-      UPLOADER_CONTAINER = aws_ecs_task_definition.deployer_task.container_definitions[0].name
-      UPLOADER_TASK_ARN  = aw
+      SECRET_ACCESS_KEY      = var.aws_secret_key
+      ACCESS_KEY_ID          = var.aws_access_key
+      REGION                 = var.aws_region
+      ECS_ENDPOINT           = "http://host.docker.internal:4566"
+      ECS_CLUSTER_NAME       = aws_ecs_cluster.rolt.name
+      ECS_DEPLOYER_CONTAINER = var.deployer_container
+      ECS_DEPLOYER_TASK_ARN  = aws_ecs_task_definition.deployer_task.arn
+      ECS_DEPLOYER_SUBNETS   = aws_subnet.rolt_public_subnet.id
     }
   }
 }

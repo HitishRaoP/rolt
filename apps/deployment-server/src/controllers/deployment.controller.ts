@@ -61,7 +61,6 @@ export const CreateDeployment = async (
 		const sendMessageCommand = new SendMessageCommand({
 			MessageBody: JSON.stringify(response),
 			QueueUrl,
-			MessageGroupId: DEPLOYMENT_SERVER_CONSTANTS.SQS.QUEUE_NAME,
 		});
 		await sqsClient.send(sendMessageCommand);
 		return sendResponse({

@@ -13,9 +13,9 @@ export const LAMBDA_CONSTANTS = {
     ECS: {
         ENDPOINT: process.env.ECS_ENDPOINT!,
         CLUSTER_NAME: process.env.ECS_CLUSTER_NAME!,
-        UPLOADER_CONTAINER: process.env.ECS_UPLOADER_CONTAINER!,
-        UPLOADER_TASK_ARN: process.env.ECS_UPLOADER_TASK_ARN!,
-        UPLOADER_SUBNETS: process.env.ECS_UPLOADER_SUBNETS!,
+        DEPLOYER_CONTAINER: process.env.ECS_DEPLOYER_CONTAINER!,
+        DEPLOYER_TASK_ARN: process.env.ECS_DEPLOYER_TASK_ARN!,
+        DEPLOYER_SUBNETS: process.env.ECS_DEPLOYER_SUBNETS!,
     },
 };
 
@@ -46,22 +46,22 @@ async function processMessageAsync(message: SQSRecord) {
         const deploymentData = JSON.parse(message.body);
         const command = new RunTaskCommand({
             cluster: LAMBDA_CONSTANTS.ECS.CLUSTER_NAME,
-            taskDefinition: LAMBDA_CONSTANTS.ECS.UPLOADER_TASK_ARN,
+            taskDefinition: LAMBDA_CONSTANTS.ECS.DEPLOYER_TASK_ARN,
             launchType: "FARGATE",
             networkConfiguration: {
                 awsvpcConfiguration: {
-                    subnets: [LAMBDA_CONSTANTS.ECS.UPLOADER_SUBNETS],
+                    subnets: LAMBDA_CONSTANTS.ECS.DEPLOYER_SUBNETS?.split(","),
                 },
             },
             overrides: {
                 containerOverrides: [
                     {
-                        name: LAMBDA_CONSTANTS.ECS.UPLOADER_CONTAINER,
+                        name: LAMBDA_CONSTANTS.ECS.DEPLOYER_CONTAINER,
                         environment: [
-                            { name: "OWNER", value: deploymentData.owner },
-                            { name: "REF", value: deploymentData.ref },
-                            { name: "REPO", value: deploymentData.repo },
-                            { name: "URL", value: deploymentData.url },
+                            { name: "OWNER", value: deploymentData?.owner },
+                            { name: "REF", value: deploymentData?.ref },
+                            { name: "REPO", value: deploymentData?.repo },
+                            { name: "URL", value: deploymentData?.url },
                         ],
                     },
                 ],
