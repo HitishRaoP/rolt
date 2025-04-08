@@ -1,6 +1,8 @@
 #!/bin/sh
 
-# Terraform steps
+############################
+# TERRAFORM SCRIPTS
+###########################
 TERRAFORM_DIR="terraform"
 
 echo "Initializing Terraform..."
@@ -12,7 +14,9 @@ terraform -chdir="$TERRAFORM_DIR" plan
 echo "Applying Terraform changes..."
 terraform -chdir="$TERRAFORM_DIR" apply -auto-approve
 
-# Docker deployer image push
+############################
+# DEPLOYER IMAGE
+############################
 DEPLOYER_DIR="docker/deployer"
 PUSH_SCRIPT="push.sh"
 
