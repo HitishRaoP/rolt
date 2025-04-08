@@ -17,3 +17,8 @@ variable "aws_access_key" {
   type = string
   default = "test"
 }
+
+variable "deployer_image" {
+  type = string
+  default = "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/rolt:latest"
+}

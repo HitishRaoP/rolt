@@ -6,10 +6,10 @@ provider "aws" {
   skip_requesting_account_id  = true
 
   endpoints {
-    ecr = var.localstack_endpoint
-    ecs = var.localstack_endpoint
-    sqs = var.localstack_endpoint
-    ec2 = var.localstack_endpoint
+    ecr      = var.localstack_endpoint
+    ecs      = var.localstack_endpoint
+    sqs      = var.localstack_endpoint
+    ec2      = var.localstack_endpoint
     dynamodb = var.localstack_endpoint
   }
 }
@@ -23,9 +23,9 @@ resource "aws_ecr_repository" "rolt" {
 }
 
 resource "aws_dynamodb_table" "build_logs" {
-  name = "build_logs"
+  name         = "build_logs"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key = "deploymentId"
+  hash_key     = "deploymentId"
   attribute {
     name = "deploymentId"
     type = "S"
@@ -33,9 +33,9 @@ resource "aws_dynamodb_table" "build_logs" {
 }
 
 resource "aws_dynamodb_table" "production_logs" {
-  name = "production_logs"
+  name         = "production_logs"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key = "deploymentId"
+  hash_key     = "deploymentId"
   attribute {
     name = "deploymentId"
     type = "S"
@@ -45,7 +45,7 @@ resource "aws_dynamodb_table" "production_logs" {
 resource "aws_vpc" "rolt_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
-    name = "rolt-vpc"
+    name     = "rolt-vpc"
     resource = "vpc"
   }
 }
@@ -61,4 +61,55 @@ resource "aws_subnet" "rolt_public_subnet" {
 
 resource "aws_sqs_queue" "deployer_queue" {
   name = "deployer_queue"
+}
+
+resource "aws_ecs_task_definition" "deployer_task" {
+  family                   = "deployer_task"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  container_definitions = [
+    {
+      name      = "deployer"
+      image     = var.deployer_image
+      essential = true
+    }
+  ]
+}
+
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "iam_for_lambda" {
+  name               = "iam_for_lambda"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_file = "index.js"
+  output_path = "function.zip"
+}
+
+resource "aws_lambda_function" "deployer_trigger" {
+  filename      = "${path.module}/../packages/lambdas/function.zip"
+  function_name = "deployer_trigger"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "index.handler"
+  source_code_hash = data.archive_file.lambda.output_base64sha256
+  runtime = "nodejs18.x"
+  environment {
+    variables = {
+      foo = "bar"
+    }
+  }
 }
