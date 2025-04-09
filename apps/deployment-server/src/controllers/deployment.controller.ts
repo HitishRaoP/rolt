@@ -6,11 +6,12 @@ import {
 	GetQueueUrlCommand,
 } from '@aws-sdk/client-sqs';
 import { sendResponse } from '@rolt/utils';
-import { ZodError } from 'zod';
+import { date, ZodError } from 'zod';
 import { DEPLOYMENT_SERVER_CONSTANTS } from '../constants/deployment-server-constants.js';
 import { CreateDeploymentSchema } from '@rolt/schemas';
 import { nanoid } from 'nanoid';
 import { CreateDeploymentResponse } from '@rolt/types/Deployment';
+import { DeploymentService } from '../services/deployment.service.js';
 
 /**
  * @description Handles the deployment request by validating input,
@@ -25,72 +26,22 @@ export const CreateDeployment = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
+
 	try {
-		/**
-		 * Sanitize the input
-		 */
-		const body = CreateDeploymentSchema.parse(req.body);
-
-		/**
-		 * Initialize the SQS client
-		 */
-		const sqsClient = new SQSClient({
-			region: DEPLOYMENT_SERVER_CONSTANTS.AWS.REGION,
-			credentials: {
-				accessKeyId: DEPLOYMENT_SERVER_CONSTANTS.AWS.ACCESS_KEY_ID,
-				secretAccessKey: DEPLOYMENT_SERVER_CONSTANTS.AWS.SECRET_ACCESS_KEY,
-			},
-			endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
-		});
-
-		/**
-		 * Get the Queue URL from the queue name
-		 */
-		const getQueueURLCommand = new GetQueueUrlCommand({
-			QueueName: DEPLOYMENT_SERVER_CONSTANTS.SQS.QUEUE_NAME,
-		});
-		const { QueueUrl } = await sqsClient.send(getQueueURLCommand);
-
-		/**
-		 * Send the message to the Queue URL obtained along with the Deployment ID
-		 */
-		const response: CreateDeploymentResponse = {
-			...body,
-			deploymentId: nanoid(),
-		};
-		const sendMessageCommand = new SendMessageCommand({
-			MessageBody: JSON.stringify(response),
-			QueueUrl,
-		});
-		await sqsClient.send(sendMessageCommand);
+		const deploymentService = new DeploymentService(
+			CreateDeploymentSchema.parse(req.body));
+		const response = await deploymentService.deploy();
 		return sendResponse({
 			res,
-			statusCode: 200,
-			message: 'Deployment request successfully queued.',
-			data: response,
-		});
+			message: response.message,
+			statusCode: response.statusCode,
+			data: response.data
+		})
 	} catch (error) {
-		if (error instanceof ZodError) {
-			return sendResponse({
-				res,
-				statusCode: 400,
-				message: 'Bad Request: Invalid input',
-				data: error.errors,
-			});
-		}
-
-		if (error instanceof SQSServiceException) {
-			return sendResponse({
-				res,
-				statusCode: 500,
-				message: `AWS SQS Error: ${(error as Error).message}`,
-			});
-		}
-
 		return sendResponse({
 			res,
-			statusCode: 500,
-			message: `Internal Server Error: ${(error as Error).message}`,
-		});
+			message: "Internal Server Error",
+			statusCode: 500
+		})
 	}
 };

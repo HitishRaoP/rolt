@@ -1961,6 +1961,11 @@
   resolved "https://registry.yarnpkg.com/@octokit/webhooks-methods/-/webhooks-methods-5.1.1.tgz#192f11a1f115702833f033293e2fef8f69f612e4"
   integrity sha512-NGlEHZDseJTCj8TMMFehzwa9g7On4KJMPVHDSrHxCQumL6uSQR8wIkP/qesv52fXqV1BPf4pTxwtS31ldAt9Xg==
 
+"@octokit/webhooks-types@^7.6.1":
+  version "7.6.1"
+  resolved "https://registry.yarnpkg.com/@octokit/webhooks-types/-/webhooks-types-7.6.1.tgz#bc96371057c2d54c982c9f8f642655b26cd588eb"
+  integrity sha512-S8u2cJzklBC0FgTwWVLaM8tMrDuDMVE4xiTK4EYXM9GntyvrdbSoxqDQa+Fh57CCNApyIpyeqPhhFEmHPfrXgw==
+
 "@octokit/webhooks@^13.8.0":
   version "13.8.0"
   resolved "https://registry.yarnpkg.com/@octokit/webhooks/-/webhooks-13.8.0.tgz#0d1f40f5b4217090deb5b810426052f477d8522b"
@@ -6885,5 +6890,5 @@ yoctocolors-cjs@^2.1.2:
 
 zod@^3.24.2:
   version "3.24.2"
-  resolved "https://registry.npmjs.org/zod/-/zod-3.24.2.tgz"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.24.2.tgz#8efa74126287c675e92f46871cfc8d15c34372b3"
   integrity sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==
