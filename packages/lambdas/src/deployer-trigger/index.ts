@@ -56,7 +56,7 @@ async function processMessageAsync(message: SQSRecord) {
             overrides: {
                 containerOverrides: [
                     {
-                        name: LAMBDA_CONSTANTS.ECS.DEPLOYER_CONTAINER,
+                        name: deploymentData?.repo,
                         environment: [
                             { name: "OWNER", value: deploymentData?.owner },
                             { name: "REF", value: deploymentData?.ref },
