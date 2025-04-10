@@ -4,15 +4,27 @@ import cors from 'cors';
 import DeploymentRouter from './routes/deployment.route.js';
 import { DEPLOYMENT_SERVER_CONSTANTS } from './constants/deployment-server-constants.js';
 import { sendResponse } from '@rolt/utils';
-import { PushEvent } from '@octokit/webhooks-types';
+import WebhookRouter from './routes/webhook.route.js';
+import mongoose from 'mongoose';
 
 const app = express();
+
+const connectDb = async () => {
+	try {
+		await mongoose.connect(DEPLOYMENT_SERVER_CONSTANTS.MONGODB.URI);
+		console.log("Connected To MongoDB");
+	} catch (error) {
+		throw new Error(`${error}`)
+	}
+}
 
 const init = async () => {
 
 	app.use(cors());
 
 	app.use(express.json());
+
+	await connectDb();
 
 	app.get('/', (req: Request, res: Response) => {
 		return sendResponse({
@@ -24,15 +36,7 @@ const init = async () => {
 
 	app.use('/deployment', DeploymentRouter);
 
-	app.post("/webhooks", async (req: Request, res: Response) => {
-		try {
-			const payload: PushEvent = req.body;
-			console.log(payload);
-			res.send(payload)
-		} catch (error) {
-			throw new Error(`${error}`)
-		}
-	})
+	app.use("/webhooks", WebhookRouter)
 
 	app.listen(DEPLOYMENT_SERVER_CONSTANTS.DEV.PORT, () => {
 		console.log(

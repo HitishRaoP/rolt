@@ -1,7 +1,7 @@
 export type CreateDeployment = {
 	owner: string;
 	repo: string;
-	ref: string;
+	ref?: string;
 	url?: string;
 	buildCommand?: string;
 	startCommand?: string;
@@ -17,3 +17,10 @@ export type BuildLog = {
 	timezone: string;
 	log: string
 };
+
+export type App = {
+	owner: string
+	installationId: Number
+}
+
+export type EventType = "push" | "installation"

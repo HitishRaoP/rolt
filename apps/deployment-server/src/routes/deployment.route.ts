@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { CreateDeployment } from '../controllers/deployment.controller';
+import { CreateDeployment } from '../controllers/deployment.controller.js';
 
 const DeploymentRouter = Router();
 

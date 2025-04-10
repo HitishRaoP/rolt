@@ -9,6 +9,9 @@ config({
 });
 
 export const DEPLOYMENT_SERVER_CONSTANTS = {
+	MONGODB: {
+		URI: process.env.MONGODB_URI!
+	},
 	DEV: {
 		PORT: process.env.PORT!,
 		FRONTEND_URL: process.env.FRONTEND_URL!,
