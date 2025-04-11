@@ -2,10 +2,12 @@
 
 set -e
 export NODE_NO_WARNINGS=1
+
 ############################
-#LAMBDA FUNCTION
+#GENERATE THE K8s KEYS FOR TERRAFORM
 ############################
-base64 -w 0 ~/.kube/config > packages/lambdas/src/deployer-trigger/kubeconfig.b64
+sh k8s/keys.sh
+
 
 
 ############################
@@ -67,3 +69,6 @@ npx concurrently \
 #TEMPORARY FIX
 ############################
 #kubectl port-forward pod/traefik-5f9fd446dc-qnzdq  8000:8000
+
+
+

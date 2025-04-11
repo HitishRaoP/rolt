@@ -12,14 +12,16 @@ resource "aws_lambda_function" "deployer_trigger" {
   handler          = "index.handler"
   source_code_hash = data.archive_file.lambda.output_base64sha256
   runtime          = "nodejs22.x"
+
   environment {
     variables = {
-      SECRET_ACCESS_KEY  = var.aws_secret_key
-      ACCESS_KEY_ID      = var.aws_access_key
-      REGION             = var.aws_region
-      ECS_ENDPOINT       = "http://host.docker.internal:4566"
-      ECS_CLUSTER_NAME   = aws_ecs_cluster.rolt.name
-      ECS_DEPLOYER_IMAGE = var.deployer_image
+      MINIKUBE_SECRET         = aws_secretsmanager_secret.minikube_certs.name
+      MINIKUBE_DEPLOYER_IMAGE = var.MINIKUBE_DEPLOYER_IMAGE
+      MINIKUBE_ENDPOINT       = var.MINIKUBE_ENDPOINT
+      AWS_ENDPOINT            = var.aws_endpoint
+      AWS_ACCESS_KEY_ID       = var.aws_access_key
+      AWS_SECRET_ACCESS_KEY   = var.aws_secret_key
+      AWS_REGION              = var.aws_region
     }
   }
 }

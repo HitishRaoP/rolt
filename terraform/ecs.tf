@@ -9,7 +9,7 @@ resource "aws_ecs_task_definition" "deployer_task" {
   container_definitions = jsonencode([
     {
       name      = var.deployer_container
-      image     = var.deployer_image
+      image     = var.MINIKUBE_DEPLOYER_IMAGE
       essential = true
       portMappings = [
         {
