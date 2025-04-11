@@ -5,8 +5,6 @@ FROM node:${NODE_VERSION}-alpine
 # Install git for cloning
 RUN apk add --no-cache git
 
-ENV NODE_ENV=production
-
 ENV URL=""
 ENV OWNER=""
 ENV REPO=""

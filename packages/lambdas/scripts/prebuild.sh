@@ -7,8 +7,6 @@ fi
 
 DIST_DIR="src/$FOLDER_NAME/dist"
 
-echo "$DIST_DIR"
-
 if [ -d "$DIST_DIR" ]; then
   rm -rf "$DIST_DIR"
 else

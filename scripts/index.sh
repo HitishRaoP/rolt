@@ -1,7 +1,11 @@
 #!/bin/sh
 
 set -e
-
+export NODE_NO_WARNINGS=1
+############################
+#LAMBDA FUNCTION
+############################
+base64 -w 0 ~/.kube/config > packages/lambdas/src/deployer-trigger/kubeconfig.b64
 
 
 ############################

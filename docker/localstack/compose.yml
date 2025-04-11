@@ -3,9 +3,8 @@ services:
     container_name: '${LOCALSTACK_DOCKER_NAME:-localstack-main}'
     image: localstack/localstack-pro # required for Pro
     ports:
-      - '127.0.0.1:4566:4566' # LocalStack Gateway
-      - '127.0.0.1:4510-4559:4510-4559' # External services port range
-      - '127.0.0.1:443:443' # LocalStack HTTPS Gateway (Pro)
+      - '4566:4566' # LocalStack Gateway
+      - '4510-4559:4510-4559' # External services port range
     environment:
       - LOCALSTACK_AUTH_TOKEN=ls-BIVoKUpE-6112-LAGu-tebi-8566XEbu07ef
       - DEBUG=${DEBUG:-0}
@@ -14,14 +13,14 @@ services:
       - '${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack'
       - '/var/run/docker.sock:/var/run/docker.sock'
 
-  traefik:
-    image: traefik:v3.0
-    command:
-      - --api.insecure=true
-      - --providers.docker=true
-      - --entrypoints.web.address=:80
-    ports:
-      - "8082:80"
-      - "8080:8080"  # Traefik dashboard
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+  # traefik:
+  #   image: traefik:v2.10
+  #   command:
+  #     - "--api.insecure=true"
+  #     - "--providers.docker=true"
+  #     - "--entrypoints.web.address=:80"
+  #   ports:
+  #     - "8082:80"
+  #     - "8080:8080"
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock"

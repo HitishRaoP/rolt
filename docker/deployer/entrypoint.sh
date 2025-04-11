@@ -30,7 +30,7 @@ if [ -f "package.json" ]; then
     PACKAGE_MANAGER="npm"
   fi
 
-  $PACKAGE_MANAGER install
+  $PACKAGE_MANAGER install --prod=false
   $PACKAGE_MANAGER run build
 
   echo "Forcing app to run on port 3000..."

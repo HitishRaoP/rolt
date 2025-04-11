@@ -1,16 +1,6 @@
 import { Request, Response } from 'express';
-import {
-	SQSClient,
-	SendMessageCommand,
-	SQSServiceException,
-	GetQueueUrlCommand,
-} from '@aws-sdk/client-sqs';
 import { sendResponse } from '@rolt/utils';
-import { date, ZodError } from 'zod';
-import { DEPLOYMENT_SERVER_CONSTANTS } from '../constants/deployment-server-constants.js';
 import { CreateDeploymentSchema } from '@rolt/schemas';
-import { nanoid } from 'nanoid';
-import { CreateDeploymentResponse } from '@rolt/types/Deployment';
 import { DeploymentService } from '../services/deployment.service.js';
 
 /**
@@ -26,7 +16,6 @@ export const CreateDeployment = async (
 	req: Request,
 	res: Response,
 ): Promise<void> => {
-
 	try {
 		const deploymentService = new DeploymentService(
 			CreateDeploymentSchema.parse(req.body));

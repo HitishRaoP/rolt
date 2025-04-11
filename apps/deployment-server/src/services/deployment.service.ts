@@ -1,7 +1,7 @@
 import { GetQueueUrlCommand, SendMessageCommand, SQSClient, SQSServiceException } from "@aws-sdk/client-sqs";
 import { DEPLOYMENT_SERVER_CONSTANTS } from "../constants/deployment-server-constants.js";
 import { CreateDeployment, CreateDeploymentResponse } from "@rolt/types/Deployment";
-import { nanoid } from "nanoid";
+import { customAlphabet, nanoid } from "nanoid";
 import { ZodError } from "zod";
 
 export class DeploymentService {
@@ -31,11 +31,16 @@ export class DeploymentService {
             const { QueueUrl } = await this.sqsClient.send(getQueueURLCommand);
 
             /**
-             * Send the message to the Queue URL obtained along with the Deployment ID
+             * Send the message to the Queue URL obtained along with the Deployment ID (Following K8s Guidelines)
             */
+            const id = () => {
+                const safeId = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10)();
+                return `d${safeId}`;
+            };
+
             const response: CreateDeploymentResponse = {
                 ...this.deploymentDetails,
-                deploymentId: nanoid(),
+                deploymentId: id(),
             };
             const sendMessageCommand = new SendMessageCommand({
                 MessageBody: JSON.stringify(response),

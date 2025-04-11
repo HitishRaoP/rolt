@@ -34,5 +34,6 @@ provider "aws" {
     ssm                    = var.localstack_endpoint
     stepfunctions          = var.localstack_endpoint
     sts                    = var.localstack_endpoint
+    eks                    = var.localstack_endpoint
   }
 }

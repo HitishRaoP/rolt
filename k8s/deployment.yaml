@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: '123455'
+spec:
+  selector:
+    matchLabels:
+      app: '123455'
+  template:
+    metadata:
+      labels:
+        app: '123455'
+    spec:
+      containers:
+        - name: '123455'
+          image: 'deployer:latest'
+          imagePullPolicy: Never
+          resources:
+            limits:
+              memory: '1024Mi'
+              cpu: '500m'
+          ports:
+            - containerPort: 3000
+          env:
+            - name: 'OWNER'
+              value: 'Chethan2485'
+            - name: 'REPO'
+              value: 'example'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vite-service
+spec:
+  type: NodePort
+  selector:
+    app: '123455'
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
