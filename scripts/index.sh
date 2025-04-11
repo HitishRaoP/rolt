@@ -27,9 +27,11 @@ terraform -chdir="$TERRAFORM_DIR" apply -target="aws_ecr_repository.rolt" -auto-
 DEPLOYER_DIR="docker/deployer"
 PUSH_SCRIPT="push.sh"
 
+eval $(minikube docker-env)
 echo "Pushing Deployer Docker image to ECR..."
 (cd "$DEPLOYER_DIR" && sh "$PUSH_SCRIPT")
 echo "Docker image pushed successfully."
+eval $(minikube docker-env -u)
 
 
 

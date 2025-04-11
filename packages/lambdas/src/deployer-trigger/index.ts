@@ -24,6 +24,7 @@ export const handler = async (event: SQSEvent) => {
 };
 function getMinikubeKubeConfig(): k8s.KubeConfig {
     const kc = new k8s.KubeConfig();
+
     kc.loadFromOptions({
         clusters: [
             {
@@ -49,7 +50,6 @@ function getMinikubeKubeConfig(): k8s.KubeConfig {
         ],
         currentContext: "minikube-context",
     });
-
     return kc;
 }
 
@@ -59,10 +59,13 @@ async function processMessageAsync(message: SQSRecord) {
         console.log("Received SQS message:", message);
         const deploymentData = JSON.parse(message.body);
 
+
         const kc = getMinikubeKubeConfig();
         const k8sApi = kc.makeApiClient(k8s.AppsV1Api);
         const coreV1Api = kc.makeApiClient(k8s.CoreV1Api);
         const networkingV1Api = kc.makeApiClient(k8s.NetworkingV1Api);
+
+        const k8sLog = new k8s.Log(kc);
 
         const deploymentId = (deploymentData.deploymentId as string).toLowerCase();
 
