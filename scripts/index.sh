@@ -45,11 +45,25 @@ echo "Deployment complete."
 
 
 ############################
-# EXPOST 8081/api/github/webhooks
+# TUNNELING ENDPOINTS
 ############################
+
+#GITHUB WEBHOOKS
 WEBHOOK_URL="http://localhost:8081/webhooks"
 SMEE_URL="https://smee.io/R4afGEA1VtckDWo"
 
-echo "Exposing $WEBHOOK_URL via $SMEE_URL"
-yarn smee -u "$SMEE_URL" -t "$WEBHOOK_URL"
-echo "Listening for GitHub Webhooks"
+#LOG SERVER
+LOGGING_SMEE='https://smee.io/R7CnnfFPlA0XiBv'
+LOGGING_URL='http://localhost:8085/logs'
+
+npx concurrently \
+  "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \
+  "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\""
+
+
+
+############################
+#Forward the Traefik Port
+#TEMPORARY FIX
+############################
+#kubectl port-forward pod/traefik-5f9fd446dc-qnzdq  8000:8000

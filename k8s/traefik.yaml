@@ -1,16 +1,31 @@
+# Service to expose Traefik
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: traefik
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+
+---
+# Ingress that routes traffic to the Traefik service
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: vite-ingress
+  name: traefik-ingress
 spec:
   rules:
-    - host: 'project.localhost'
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: vite-service
+                name: traefik-service
                 port:
-                  number: 3000
+                  number: 8000

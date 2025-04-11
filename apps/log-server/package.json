@@ -4,6 +4,13 @@
 	"main": "index.js",
 	"license": "MIT",
 	"private": true,
+	"scripts": {
+		"dev": "tsx watch api/index.ts",
+		"build": "rm -rf dist && tsc",
+		"start": "node dist/api/index.js",
+		"lint": "eslint .",
+		"check-types": "tsc --noEmit --pretty"
+	},
 	"devDependencies": {
 		"@rolt/typescript-config": "*",
 		"@types/cors": "^2.8.17",

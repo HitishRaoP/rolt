@@ -3,8 +3,9 @@ import cors from "cors";
 import { sendResponse } from "@rolt/utils";
 import { LOG_SERVER_CONSTANTS } from "./constants/log-server-constants";
 
+const app = express();
+
 async function init() {
-    const app = express();
 
     app.use(express.json());
 
@@ -18,9 +19,17 @@ async function init() {
         })
     })
 
-    app.listen(LOG_SERVER_CONSTANTS.DEV.PORT, ()=>{
+    app.post("/logs", (req, res) => {
+        const logs = req.body;
+        console.log('Received log batch:', logs);
+        res.sendStatus(200);
+    })
+
+    app.listen(LOG_SERVER_CONSTANTS.DEV.PORT, () => {
         console.log(`Server is running at http://localhost:${LOG_SERVER_CONSTANTS.DEV.PORT}`);
     })
 }
 
 init()
+
+export default app;
