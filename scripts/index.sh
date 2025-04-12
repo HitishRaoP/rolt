@@ -2,6 +2,16 @@
 
 set -e
 export NODE_NO_WARNINGS=1
+export TSX_NO_LOG=true
+
+
+
+############################
+#BANNER
+############################
+yarn tsx scripts/banner.ts
+
+
 
 ############################
 #GENERATE THE K8s KEYS FOR TERRAFORM
