@@ -38,6 +38,8 @@ eval $(minikube docker-env -u)
 # TERRAFORM
 ############################
 echo "Applying Terraform configuration..."
+TERRAFORM_DIR="terraform"
+terraform -chdir="$TERRAFORM_DIR" init
 terraform -chdir="$TERRAFORM_DIR" apply -auto-approve
 echo "Deployment complete."
 

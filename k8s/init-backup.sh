@@ -21,6 +21,8 @@ helm install traefik traefik/traefik \
   --set dashboard.enabled=true \
   --set ingressRoute.dashboard.enabled=true \
   --set service.enabled=false
+kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2
+
 
 #################
 # ELASTIC SEARCH
@@ -66,9 +68,6 @@ spec:
               cpu: "1000m"
 EOF
 #WAIT TILL THE POD STARTS
-kubectl port-forward service/elasticsearch-es-http 9200
-PASSWORD=$(kubectl get secret elasticsearch-es-elastic-user -o go-template='{{.data.elastic | base64decode}}')
-curl -u "elastic:$PASSWORD" -k "https://localhost:9200"
 
 #################
 #KIBANA
@@ -108,8 +107,10 @@ EOF
 #WAIT TILL THE POD STARTS
 kubectl port-forward service/elasticsearch-kb-http 5601
 #PASSWORD
-kubectl get secret quickstart-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+kubectl get secret elasticsearch-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
 
 #################
 #FLUENT BIT
 #################
+helm repo add fluent https://fluent.github.io/helm-charts
+helm upgrade --install fluent-bit fluent/fluent-bit -f k8s/fluentbit-values.yaml
