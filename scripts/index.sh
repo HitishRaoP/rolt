@@ -21,19 +21,6 @@ sh k8s/keys.sh
 
 
 ############################
-# TERRAFORM - Phase 1
-############################
-TERRAFORM_DIR="terraform"
-
-echo "Initializing Terraform..."
-terraform -chdir="$TERRAFORM_DIR" init
-
-echo "Creating ECR repository (targeted apply)..."
-terraform -chdir="$TERRAFORM_DIR" apply -target="aws_ecr_repository.rolt" -auto-approve
-
-
-
-############################
 # PUSH DOCKER IMAGE
 ############################
 DEPLOYER_DIR="docker/deployer"
@@ -48,12 +35,12 @@ eval $(minikube docker-env -u)
 
 
 ############################
-# TERRAFORM - Phase 2
+# TERRAFORM
 ############################
-echo "Applying full Terraform configuration..."
+echo "Applying Terraform configuration..."
 terraform -chdir="$TERRAFORM_DIR" apply -auto-approve
-
 echo "Deployment complete."
+
 
 
 ############################
@@ -78,7 +65,7 @@ npx concurrently \
 #Forward the Traefik Port
 #TEMPORARY FIX
 ############################
-#kubectl port-forward pod/traefik-5f9fd446dc-qnzdq  8000:8000
+#kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2
 
 
 
