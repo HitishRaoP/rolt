@@ -3,12 +3,17 @@ import { DEPLOYMENT_SERVER_CONSTANTS } from "../constants/deployment-server-cons
 import { CreateDeployment, CreateDeploymentResponse } from "@rolt/types/Deployment";
 import { customAlphabet } from "nanoid";
 import { ZodError } from "zod";
-import { Octokit } from "@octokit/rest"
+import { Octokit as OctokitRest } from "@octokit/rest"
+import { readFileSync } from "fs";
+import path from "path";
+import { Octokit as OctokitCore } from "@octokit/core";
+import { createAppAuth } from "@octokit/auth-app";
 
 export class DeploymentService {
     private sqsClient: SQSClient;
     private deploymentDetails: CreateDeployment;
-    private octokit: Octokit;
+    private octokit: OctokitRest;
+    private appOctokit: OctokitCore;
 
     constructor(deploymentDetails: CreateDeployment) {
         this.deploymentDetails = deploymentDetails;
@@ -20,15 +25,28 @@ export class DeploymentService {
             },
             endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
         });
-        this.octokit = new Octokit();
+        this.octokit = new OctokitRest();
+        this.appOctokit = new OctokitCore({
+            authStrategy: createAppAuth,
+            auth: {
+                appId: 982451,
+                privateKey: readFileSync(path.resolve(__dirname, "project-rolt.2025-04-13.private-key"), "utf-8"),
+            },
+        });
     }
 
-    private async commitSha() {
+
+    private async commitDetails() {
         const commits = await this.octokit
             .rest
             .repos.
             listCommits(this.deploymentDetails);
-        return commits?.data[0]?.sha as string;
+        const latestCommit = commits?.data[0];
+        return {
+            date: latestCommit?.commit.committer?.date as string,
+            message: latestCommit?.commit.message as string,
+            commitSha: latestCommit?.sha as string
+        }
     }
 
     async deploy() {
@@ -52,7 +70,7 @@ export class DeploymentService {
             const response: CreateDeploymentResponse = {
                 ...this.deploymentDetails,
                 deploymentId: id(),
-                commitSha: await this.commitSha()
+                ...(await this.commitDetails())
             };
             const sendMessageCommand = new SendMessageCommand({
                 MessageBody: JSON.stringify(response),
@@ -64,6 +82,7 @@ export class DeploymentService {
                 message: 'Deployment request successfully queued.',
                 data: response,
             };
+
         } catch (error) {
             if (error instanceof ZodError) {
                 return {

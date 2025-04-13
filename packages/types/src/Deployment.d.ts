@@ -9,6 +9,8 @@ export type CreateDeployment = {
 export type CreateDeploymentResponse = CreateDeployment & {
 	deploymentId: string;
 	commitSha: string;
+	date: string;
+	message: string
 };
 
 export type BuildLog = {
