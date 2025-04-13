@@ -4,13 +4,6 @@ cd /usr/src/app
 
 PORT=3000  # force everything to run on port 3000
 
-# Extract OWNER and REPO from URL if it's set
-if [ -n "$URL" ]; then
-  OWNER_REPO=$(echo "$URL" | sed -E 's|https://github.com/([^/]+)/([^/.]+).*|\1 \2|')
-  OWNER=$(echo "$OWNER_REPO" | cut -d' ' -f1)
-  REPO=$(echo "$OWNER_REPO" | cut -d' ' -f2)
-fi
-
 if [ -z "$OWNER" ] || [ -z "$REPO" ]; then
   echo "ERROR: OWNER and REPO must be set."
   exit 1

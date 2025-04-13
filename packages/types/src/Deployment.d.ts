@@ -2,13 +2,13 @@ export type CreateDeployment = {
 	owner: string;
 	repo: string;
 	ref?: string;
-	url?: string;
 	buildCommand?: string;
 	startCommand?: string;
 };
 
 export type CreateDeploymentResponse = CreateDeployment & {
 	deploymentId: string;
+	commitSha: string;
 };
 
 export type BuildLog = {

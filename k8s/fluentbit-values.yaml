@@ -391,11 +391,12 @@ config:
   inputs: |
     [INPUT]
         Name tail
-        Path /var/log/containers/*.log
+        Path /var/log/containers/*_default_*.log
         Parser docker
         Tag kube.*
-        Mem_Buf_Limit 5MB
+        Mem_Buf_Limit 10MB
         Skip_Long_Lines On
+        Read_From_Head On
 
   ## https://docs.fluentbit.io/manual/pipeline/filters
   filters: |
@@ -404,38 +405,27 @@ config:
         Match kube.*
         Kube_Tag_Prefix kube.var.log.containers.
         Merge_Log On
-        Merge_Log_Key log
         K8S-Logging.Parser On
-        K8S-Logging.Exclude On
+        K8S-Logging.Exclude Off
+        Buffer_Size 5MB
 
 
   ## https://docs.fluentbit.io/manual/pipeline/outputs
   outputs: |
     [OUTPUT]
         Name es
-        Match kube.*
+        Match **
         Host elasticsearch-es-http.default.svc
         Port 9200
         tls On
         tls.verify Off
         HTTP_User elastic
-        HTTP_Passwd ez86G8e6L1fvKurh51U76ey4
-        Logstash_Format On
+        HTTP_Passwd h68xlu06kulFct7H798EQC45
         Retry_Limit False
         Suppress_Type_Name On
-
-    [OUTPUT]
-        Name es
-        Match host.*
-        Host elasticsearch-es-http.default.svc
-        Port 9200
-        tls On
-        tls.verify Off
-        HTTP_User elastic
-        HTTP_Passwd ez86G8e6L1fvKurh51U76ey4
-        Logstash_Format On
-        Retry_Limit False
-        Suppress_Type_Name On
+        Trace_Error       On
+        Trace_Output      On
+        Index rolt
 
 
   ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/upstream-servers

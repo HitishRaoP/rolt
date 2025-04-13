@@ -1,0 +1,30 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+spec:
+  version: 8.17.4
+  count: 1
+  elasticsearchRef:
+    name: elasticsearch
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        readinessProbe:
+          tcpSocket:
+            port: 5601
+          initialDelaySeconds: 200
+          periodSeconds: 10
+          successThreshold: 3
+          timeoutSeconds: 5
+        env:
+        - name: NODE_OPTIONS
+          value: "--max-old-space-size=2048"
+        resources:
+          requests:
+            memory: 2Gi
+            cpu: "100m"
+          limits:
+            memory: 2Gi
+            cpu: "1000m"

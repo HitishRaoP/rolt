@@ -1,12 +1,14 @@
 import { GetQueueUrlCommand, SendMessageCommand, SQSClient, SQSServiceException } from "@aws-sdk/client-sqs";
 import { DEPLOYMENT_SERVER_CONSTANTS } from "../constants/deployment-server-constants.js";
 import { CreateDeployment, CreateDeploymentResponse } from "@rolt/types/Deployment";
-import { customAlphabet, nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
 import { ZodError } from "zod";
+import { Octokit } from "@octokit/rest"
 
 export class DeploymentService {
     private sqsClient: SQSClient;
     private deploymentDetails: CreateDeployment;
+    private octokit: Octokit;
 
     constructor(deploymentDetails: CreateDeployment) {
         this.deploymentDetails = deploymentDetails;
@@ -18,6 +20,15 @@ export class DeploymentService {
             },
             endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
         });
+        this.octokit = new Octokit();
+    }
+
+    private async commitSha() {
+        const commits = await this.octokit
+            .rest
+            .repos.
+            listCommits(this.deploymentDetails);
+        return commits?.data[0]?.sha as string;
     }
 
     async deploy() {
@@ -41,6 +52,7 @@ export class DeploymentService {
             const response: CreateDeploymentResponse = {
                 ...this.deploymentDetails,
                 deploymentId: id(),
+                commitSha: await this.commitSha()
             };
             const sendMessageCommand = new SendMessageCommand({
                 MessageBody: JSON.stringify(response),

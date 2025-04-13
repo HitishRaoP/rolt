@@ -4,21 +4,15 @@ set -e
 export NODE_NO_WARNINGS=1
 export TSX_NO_LOG=true
 
-
-
 ############################
 #BANNER
 ############################
 yarn tsx scripts/banner.ts
 
-
-
 ############################
 #GENERATE THE K8s KEYS FOR TERRAFORM
 ############################
 sh k8s/keys.sh
-
-
 
 ############################
 # PUSH DOCKER IMAGE
@@ -27,12 +21,10 @@ DEPLOYER_DIR="docker/deployer"
 PUSH_SCRIPT="push.sh"
 
 eval $(minikube docker-env)
-echo "Pushing Deployer Docker image to ECR..."
+echo "Pushing Deployer Docker image to Minikube"
 (cd "$DEPLOYER_DIR" && sh "$PUSH_SCRIPT")
 echo "Docker image pushed successfully."
 eval $(minikube docker-env -u)
-
-
 
 ############################
 # TERRAFORM
@@ -42,8 +34,6 @@ TERRAFORM_DIR="terraform"
 terraform -chdir="$TERRAFORM_DIR" init
 terraform -chdir="$TERRAFORM_DIR" apply -auto-approve
 echo "Deployment complete."
-
-
 
 ############################
 # TUNNELING ENDPOINTS
