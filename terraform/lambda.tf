@@ -23,6 +23,7 @@ resource "aws_lambda_function" "deployer_trigger" {
       AWS_SECRET_ACCESS_KEY   = var.aws_secret_key
       AWS_REGION              = var.aws_region
       HOST_IP                 = var.HOST_IP
+      HOST                    = var.HOST
     }
   }
 }

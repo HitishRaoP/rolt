@@ -16,6 +16,7 @@ export const LAMBDA_CONSTANTS = {
         ENDPOINT: process.env.MINIKUBE_ENDPOINT,
     },
     DEV: {
-        HOST_IP: process.env.HOST_IP
+        HOST_IP: process.env.HOST_IP,
+        HOST: process.env.HOST
     }
 };

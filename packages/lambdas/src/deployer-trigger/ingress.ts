@@ -1,9 +1,11 @@
 import { CreateDeploymentResponse } from "@rolt/types/Deployment";
 import * as k8s from "@kubernetes/client-node";
+import { LAMBDA_CONSTANTS } from "./constants";
+
+const HOST = LAMBDA_CONSTANTS.DEV.HOST
 
 export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
     const { deploymentId, repo, commitSha, owner } = deploymentResponse;
-
     const ingress: k8s.V1Ingress = {
         apiVersion: "networking.k8s.io/v1",
         kind: "Ingress",
@@ -13,7 +15,7 @@ export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
         spec: {
             rules: [
                 {
-                    host: `${deploymentId}.localhost`,
+                    host: `${owner.toLowerCase()}-${repo.toLowerCase()}.${HOST}`,
                     http: {
                         paths: [
                             {
@@ -32,7 +34,7 @@ export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
                     }
                 },
                 {
-                    host: `${commitSha}.localhost`,
+                    host: `${deploymentId}.${HOST}`,
                     http: {
                         paths: [
                             {
@@ -51,7 +53,7 @@ export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
                     }
                 },
                 {
-                    host: `${owner.toLowerCase()}-${repo.toLowerCase()}.localhost`,
+                    host: `${commitSha}.${HOST}`,
                     http: {
                         paths: [
                             {
@@ -68,7 +70,7 @@ export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
                             }
                         ]
                     }
-                }
+                },
             ]
         }
     }

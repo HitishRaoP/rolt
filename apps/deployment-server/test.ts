@@ -48,20 +48,21 @@ async function random() {
   console.log(response.data);
 
 }
-random()
+
 async function createCheck() {
   const octokit = await app.getInstallationOctokit(64259490);
 
   const { data: check } = await octokit.rest.checks.update({
     owner: "HitishRaoP",
-    repo: "nextjs-sample",
-    check_run_id: 1,
+    repo: "rolt",
     name: "CI Check",
-    head_sha: "9470bd73325c0f48485809405c46954bf9317d34", // Use the commit SHA you want to associate the check with
-    status: "queued",  // or "completed"
+    check_run_id: 40513056792,
+    head_sha: "f7d7976d0089196de26557a4aa47368d9710c545", // Use the commit SHA you want to associate the check with
+    status: "completed",  // or "completed"
+    conclusion: "failure",
     output: {
       title: "CI Check",
-      summary: "All tests passed successfully.",
+      summary: "Some tests failed.",
       text: "Detailed test results can be found in the pipeline logs.",
     },
   });
@@ -69,3 +70,4 @@ async function createCheck() {
   console.log(checkPrime);
 }
 
+createCheck()

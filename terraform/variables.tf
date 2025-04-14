@@ -54,3 +54,8 @@ variable "MINIKUBE_KEY_DATA" {
 variable "HOST_IP" {
   type = string
 }
+
+variable "HOST" {
+  type = string
+  default = "localhost"
+}

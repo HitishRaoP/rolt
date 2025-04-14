@@ -13,9 +13,9 @@ export const getDomains = ({
 }: GetDomainsProps) => {
 
     return {
-        web: `http://${owner}-${repo}.rolt.tech:8000`,
-        sha: `http://${commitSha}.rolt.tech:8000`,
-        id: `http://${deploymentId}.rolt.tech:8000`,
-        logs: `http://${deploymentId}.rolt.tech:8000/logs`,
+        web: `http://${owner.toLowerCase()}-${repo.toLowerCase()}.localhost:8000`,
+        sha: `http://${commitSha}.localhost:8000`,
+        id: `http://${deploymentId}.localhost:8000`,
+        logs: `http://${deploymentId}.localhost:8000/logs`,
     }
 }
