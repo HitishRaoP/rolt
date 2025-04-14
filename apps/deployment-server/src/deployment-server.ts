@@ -6,6 +6,7 @@ import { DEPLOYMENT_SERVER_CONSTANTS } from './constants/deployment-server-const
 import { sendResponse } from '@rolt/utils';
 import WebhookRouter from './routes/webhook.route.js';
 import mongoose from 'mongoose';
+import GithubRouter from './routes/github.route.js';
 
 const app = express();
 
@@ -37,6 +38,8 @@ const init = async () => {
 	app.use('/deployment', DeploymentRouter);
 
 	app.use("/webhooks", WebhookRouter)
+
+	app.use("/github", GithubRouter)
 
 	app.listen(DEPLOYMENT_SERVER_CONSTANTS.DEV.PORT, () => {
 		console.log(

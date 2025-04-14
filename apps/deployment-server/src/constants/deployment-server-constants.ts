@@ -25,25 +25,7 @@ export const DEPLOYMENT_SERVER_CONSTANTS = {
 		ENDPOINT: process.env.SQS_ENDPOINT!,
 		QUEUE_NAME: process.env.SQS_QUEUE_NAME!,
 	},
-	S3: {
-		BUCKET: process.env.S3_BUCKET!,
-		ENDPOINT: process.env.S3_ENDPOINT!,
-	},
-	ECR: {
-		ENDPOINT: process.env.ECR_ENDPOINT!,
-		REPO_NAME: process.env.ECR_REPO_NAME!,
-	},
-	EVENTS_BRIDGE: {
-		ENDPOINT: process.env.EVENTS_BRIDGE_ENDPOINT!,
-		BUS_NAME: process.env.EVENTS_BRIDGE_BUS_NAME!,
-		CREATE_DEPLOYMENT_RULE: process.env.EVENTS_BRIDGE_CREATE_DEPLOYMENT_RULE!,
-		CREATE_DEPLOYMENT_TARGET:
-			process.env.EVENTS_BRIDGE_CREATE_DEPLOYMENT_TARGET!,
-	},
-	ECS: {
-		ENDPOINT: process.env.ECS_ENDPOINT!,
-	},
-	LAMBDA: {
-		ENDPOINT: process.env.LAMBDA_ENDPOINT!,
+	GITHUB: {
+		APP_ID: process.env.GITHUB_APP_ID!,
 	}
 };

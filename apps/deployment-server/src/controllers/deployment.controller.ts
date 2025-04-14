@@ -30,7 +30,8 @@ export const CreateDeployment = async (
 		return sendResponse({
 			res,
 			message: "Internal Server Error",
-			statusCode: 500
+			statusCode: 500,
+			data: error
 		})
 	}
 };

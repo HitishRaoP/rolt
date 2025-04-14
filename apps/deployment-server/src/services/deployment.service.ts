@@ -8,6 +8,8 @@ import { readFileSync } from "fs";
 import path from "path";
 import { Octokit as OctokitCore } from "@octokit/core";
 import { createAppAuth } from "@octokit/auth-app";
+import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
+import { AppModel } from "../models/app.model.js";
 
 export class DeploymentService {
     private sqsClient: SQSClient;
@@ -35,6 +37,19 @@ export class DeploymentService {
         });
     }
 
+    private async getInstallationId() {
+        try {
+            const appDoc = await AppModel.findOne({
+                owner: this.deploymentDetails.owner,
+            });
+            if (!appDoc) {
+                throw new Error(`No app installation found for owner: ${this.deploymentDetails.owner}`);
+            }
+            return appDoc.installationId as number;
+        } catch (error) {
+            throw new Error(`Failed to get installation ID: ${error}`);
+        }
+    }
 
     private async commitDetails() {
         const commits = await this.octokit
@@ -47,6 +62,25 @@ export class DeploymentService {
             message: latestCommit?.commit.message as string,
             commitSha: latestCommit?.sha as string
         }
+    }
+
+    private async createGithubCheck() {
+        const octokit = await getOctokitFromInstallationId(
+            await this.getInstallationId());
+        /**
+         * Create the Github Check
+         */
+        return await octokit.rest.checks.create({
+            owner: this.deploymentDetails.owner,
+            repo: this.deploymentDetails.repo,
+            name: "Rolt",
+            head_sha: (await this.commitDetails()).commitSha,
+            status: "queued",
+            output: {
+                title: "Queued",
+                summary: "Deployment has been Queued.",
+            },
+        });
     }
 
     async deploy() {
@@ -70,7 +104,8 @@ export class DeploymentService {
             const response: CreateDeploymentResponse = {
                 ...this.deploymentDetails,
                 deploymentId: id(),
-                ...(await this.commitDetails())
+                ...(await this.commitDetails()),
+                checkRunId: (await this.createGithubCheck()).data.id
             };
             const sendMessageCommand = new SendMessageCommand({
                 MessageBody: JSON.stringify(response),
