@@ -9,7 +9,7 @@ variable "localstack_endpoint" {
 }
 
 variable "aws_endpoint" {
-  type = string
+  type    = string
   default = "http://host.docker.internal:4566"
 }
 
@@ -35,7 +35,7 @@ variable "MINIKUBE_DEPLOYER_IMAGE" {
 }
 
 variable "MINIKUBE_ENDPOINT" {
-  type = string
+  type    = string
   default = "https://host.docker.internal:52335"
 }
 
@@ -48,5 +48,9 @@ variable "MINIKUBE_CERT_DATA" {
 }
 
 variable "MINIKUBE_KEY_DATA" {
+  type = string
+}
+
+variable "HOST_IP" {
   type = string
 }

@@ -4,10 +4,6 @@ import { CreateDeployment, CreateDeploymentResponse } from "@rolt/types/Deployme
 import { customAlphabet } from "nanoid";
 import { ZodError } from "zod";
 import { Octokit as OctokitRest } from "@octokit/rest"
-import { readFileSync } from "fs";
-import path from "path";
-import { Octokit as OctokitCore } from "@octokit/core";
-import { createAppAuth } from "@octokit/auth-app";
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
 import { AppModel } from "../models/app.model.js";
 
@@ -15,7 +11,6 @@ export class DeploymentService {
     private sqsClient: SQSClient;
     private deploymentDetails: CreateDeployment;
     private octokit: OctokitRest;
-    private appOctokit: OctokitCore;
 
     constructor(deploymentDetails: CreateDeployment) {
         this.deploymentDetails = deploymentDetails;
@@ -28,13 +23,6 @@ export class DeploymentService {
             endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
         });
         this.octokit = new OctokitRest();
-        this.appOctokit = new OctokitCore({
-            authStrategy: createAppAuth,
-            auth: {
-                appId: 982451,
-                privateKey: readFileSync(path.resolve(__dirname, "project-rolt.2025-04-13.private-key"), "utf-8"),
-            },
-        });
     }
 
     private async getInstallationId() {
@@ -103,9 +91,11 @@ export class DeploymentService {
 
             const response: CreateDeploymentResponse = {
                 ...this.deploymentDetails,
+                ref: this.deploymentDetails.ref ?? "main",
                 deploymentId: id(),
                 ...(await this.commitDetails()),
-                checkRunId: (await this.createGithubCheck()).data.id
+                checkRunId: (await this.createGithubCheck()).data.id,
+                installationId: await this.getInstallationId()
             };
             const sendMessageCommand = new SendMessageCommand({
                 MessageBody: JSON.stringify(response),
@@ -130,13 +120,15 @@ export class DeploymentService {
             if (error instanceof SQSServiceException) {
                 return {
                     statusCode: 500,
-                    message: `AWS SQS Error: ${(error as Error).message}`,
+                    message: `AWS SQS Error`,
+                    data: (error as Error).message
                 };
             }
 
             return {
                 statusCode: 500,
-                message: `Internal Server Error: ${(error as Error).message}`,
+                message: `Internal Server Error`,
+                data: (error as Error).message
             };
         }
     }

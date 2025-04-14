@@ -1,4 +1,4 @@
-import { GithubCheck, GithubCheckStatus } from "@rolt/types/Deployment";
+import { GithubCheck, GithubCheckConclusion, GithubCheckStatus } from "@rolt/types/Deployment";
 import z, { ZodType } from "zod";
 import { CreateDeploymentSchema } from "./create-deployment-schema";
 
@@ -9,5 +9,6 @@ export const GithubCheckSchema = CreateDeploymentSchema.extend({
     checkRunId: z.number(),
     status: z.custom<GithubCheckStatus>(),
     title: z.string(),
-    summary: z.string()
+    summary: z.string(),
+    conclusion: z.custom<GithubCheckConclusion>().optional()
 }) satisfies ZodType<GithubCheck>

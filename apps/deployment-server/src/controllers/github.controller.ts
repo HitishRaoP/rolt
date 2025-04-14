@@ -70,6 +70,7 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
             repo,
             commitSha,
             status,
+            conclusion,
             checkRunId,
             title,
             summary } = GithubCheckSchema.parse(req.body)
@@ -89,6 +90,7 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
             name: "Rolt",
             head_sha: commitSha,
             status,
+            conclusion,
             output: {
                 title,
                 summary,

@@ -2,7 +2,7 @@ import { CreateDeploymentResponse } from "@rolt/types/Deployment";
 import * as k8s from "@kubernetes/client-node";
 
 export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
-    const { deploymentId, repo, commitSha } = deploymentResponse;
+    const { deploymentId, repo, commitSha, owner } = deploymentResponse;
 
     const ingress: k8s.V1Ingress = {
         apiVersion: "networking.k8s.io/v1",
@@ -51,7 +51,7 @@ export const ingress = (deploymentResponse: CreateDeploymentResponse) => {
                     }
                 },
                 {
-                    host: `${repo}.localhost`,
+                    host: `${owner.toLowerCase()}-${repo.toLowerCase()}.localhost`,
                     http: {
                         paths: [
                             {

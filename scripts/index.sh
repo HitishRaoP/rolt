@@ -13,6 +13,7 @@ yarn tsx scripts/banner.ts
 #GENERATE THE K8s KEYS FOR TERRAFORM
 ############################
 sh k8s/keys.sh
+sh scripts/ip.sh
 
 ############################
 # PUSH DOCKER IMAGE
@@ -50,7 +51,6 @@ LOGGING_URL='http://localhost:8085/logs'
 npx concurrently \
   "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \
   "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\""
-
 
 
 ############################

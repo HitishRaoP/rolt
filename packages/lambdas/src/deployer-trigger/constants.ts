@@ -15,4 +15,7 @@ export const LAMBDA_CONSTANTS = {
         DEPLOYER_IMAGE: process.env.MINIKUBE_DEPLOYER_IMAGE,
         ENDPOINT: process.env.MINIKUBE_ENDPOINT,
     },
+    DEV: {
+        HOST_IP: process.env.HOST_IP
+    }
 };

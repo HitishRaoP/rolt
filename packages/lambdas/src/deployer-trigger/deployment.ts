@@ -3,7 +3,7 @@ import { CreateDeploymentResponse } from '@rolt/types/Deployment'
 import { LAMBDA_CONSTANTS } from "./constants";
 
 export const deployment = (deploymentResponse: CreateDeploymentResponse) => {
-    const { deploymentId, owner, repo, ref } = deploymentResponse;
+    const { deploymentId, owner, repo, ref, installationId, commitSha, checkRunId } = deploymentResponse;
 
     const deployment: k8s.V1Deployment = {
         apiVersion: "apps/v1",
@@ -43,6 +43,11 @@ export const deployment = (deploymentResponse: CreateDeploymentResponse) => {
                                 { name: "OWNER", value: owner },
                                 { name: "REF", value: ref },
                                 { name: "REPO", value: repo },
+                                { name: "INSTALLATION_ID", value: installationId.toString() },
+                                { name: "COMMIT_SHA", value: commitSha },
+                                { name: "CHECK_RUN_ID", value: checkRunId.toString() },
+                                { name: "DEPLOYMENT_ID", value: deploymentId },
+                                { name: "HOST_IP", value: LAMBDA_CONSTANTS.DEV.HOST_IP }
                             ],
                             resources: {
                                 limits: {
