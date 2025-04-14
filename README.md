@@ -1,5 +1,8 @@
 # Project Setup Guide
 
+## Architecture
+![diagram-export-4-14-2025-8_19_44-PM](https://github.com/user-attachments/assets/2efd17ef-a430-423c-82cb-1ff4335d745f)
+
 ## Prerequisites
 Ensure you have the following installed on your system:
 - **Node.js** (Recommended: v20.11.1)
