@@ -6,62 +6,50 @@
     <h3 align="center">Rolt</h3>
 </p>
 
-## Architecture
+ROLT is a deployment automation tool that streamlines the process from GitHub push to live preview environments using Kubernetes. This repo contains the infrastructure and logic to automatically detect frameworks, deploy environments, and provide deployment URLs with three domains per deployment.
+
+---
+
+## 📸 System Architecture
+
 ![diagram-export-4-14-2025-9_06_59-PM](https://github.com/user-attachments/assets/2362dbde-30f1-4b1b-b381-cfd05f6cdd24)
 
-## Prerequisites
-Ensure you have the following installed on your system:
-- **Node.js** (Recommended: v20.11.1)
-- **Yarn** (Package manager)
-- **Docker** (For containerized development)
-- **7zip** (For compression and packaging)
+---
 
-## Installation Steps
+## 🧩 Key Components
 
-### 1. Bootstrap the Project
-Run the following command to set up dependencies:
-```sh
-yarn bootstrap
-```
+### 🔌 Frontend (ROLT GitHub App)
+- Users install the ROLT GitHub App.
+- On push/create events, GitHub triggers a **Webhook** to the ROLT backend.
 
-### 2. AWS EC2 Configuration
-- Run the AWS EC2 file (make sure you have execution permissions).
-- Copy and paste the **subnet** details as required.
+### 🧠 Backend - Framework Detectors
+- Listens for webhook events.
+- Detects project framework.
+- Enqueues jobs into `deployer-queue`.
 
-### 3. Install 7zip
-#### **Windows (Using Chocolatey)**
-If you are using Windows, install `7zip` using Chocolatey:
-```sh
-choco install 7zip -y
-```
+### 📬 Deployer Queue
+- A job queue system to manage deployments.
+- Triggers a serverless function (e.g., AWS Lambda).
 
-#### **macOS & Linux**
-On macOS and Linux, install **p7zip** (the command-line version of 7zip):
+### ⚙️ Lambda Trigger
+- Pulls the code repository.
+- Initiates deployment into a **Kubernetes Cluster**.
 
-- **macOS** (Using Homebrew):
-  ```sh
-  brew install p7zip
-  ```
-- **Debian/Ubuntu**:
-  ```sh
-  sudo apt update && sudo apt install p7zip-full -y
-  ```
-- **RHEL/CentOS**:
-  ```sh
-  sudo yum install p7zip -y
-  ```
+### 🐳 Kubernetes Cluster
+- Deploys via:
+  - **Traefik** for ingress.
+  - **Service** and **Deployment** components.
+- Live URLs:
+  - `http://deploymentId.localhost:8000`
+  - `http://owner-repo.localhost:8000`
+  - `http://commitsha.localhost:8000`
 
-### 4. Running the Project
-Once all dependencies are installed and environment variables are set, start the application as needed.
+### 🔁 CI/CD Integration
+- Updates GitHub Checks and Deployment statuses via the GitHub API.
 
-#### **Using 7zip for Compression**
-To compress files using **7zip**, use the following commands:
-
-- **Windows**:
-  ```sh
-  7z a archive.7z folder_to_compress/
-  ```
-- **macOS & Linux**:
-  ```sh
-  7z a archive.7z folder_to_compress/
-  ```
+### 📊 Observability
+- Logs collected via **Fluent-Bit**.
+- Stored in **ElasticSearch**.
+- Visualized and analyzed through:
+  - A polling service
+  - Real-time updates via **SSE (Server-Sent Events)** to a **React** frontend.
