@@ -1,4 +1,10 @@
-# Project Setup Guide
+<p align="center">
+    <img
+      src="https://github.com/user-attachments/assets/e7fcf502-38d3-480c-9367-17f4a093eec2"
+      height="96"
+    >
+    <h3 align="center">Rolt</h3>
+</p>
 
 ## Architecture
 ![diagram-export-4-14-2025-9_06_59-PM](https://github.com/user-attachments/assets/2362dbde-30f1-4b1b-b381-cfd05f6cdd24)
