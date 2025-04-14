@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router';
-import { RootLayout } from '@/modules/layouts/components/RootLayout';
+import { RootLayout } from '@/modules/layouts/components/root-layout';
 import { HomeMain } from '@/modules/home/components/HomeMain';
 
 export const useCreateAppRouter = () =>

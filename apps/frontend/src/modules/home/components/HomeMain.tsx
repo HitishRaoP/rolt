@@ -1,9 +1,9 @@
-import { ProjectCard } from "./ProjectCard"
+import { ProjectCard } from "./project-card"
 
 export const HomeMain = () => {
   return (
     <div>
-      <ProjectCard name={"HitishRaoP"} deployUrl={""} repoOwner={""} branch={""} lastDeployed={""} />
+      <ProjectCard  />
     </div>
   )
 }
