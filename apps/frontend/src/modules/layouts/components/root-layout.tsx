@@ -3,9 +3,9 @@ import { Outlet } from 'react-router'
 
 export const RootLayout = () => {
     return (
-        <div className='w-full mx-auto containe'>
+        <div>
             <HeaderMain />
-            <div className='px-5'>
+            <div className='w-full max-w-7xl p-5 mx-auto container'>
                 <Outlet />
             </div>
         </div>

@@ -13,6 +13,7 @@ import {
     DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/ui/icon'
 
 
 /*
@@ -50,7 +51,7 @@ const PROJECT_NAV_LINKS = [
 export const ProjectCard = () => {
     return (
         <Card className="shadow-none rounded-xl w-full max-w-sm">
-            <CardHeader className="flex flex-row items-center justify-between gap-4 pb-4">
+            <CardHeader className="flex flex-row items-center justify-between gap-2 pb-4">
                 {/* Avatar */}
                 <Avatar className="w-10 h-10">
                     <AvatarImage src="https://github.com/shadcn.png" className="rounded-lg" />
@@ -70,13 +71,13 @@ export const ProjectCard = () => {
                 </div>
 
                 {/* Right Icons */}
-                <div className="flex items-center gap-4 shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                     <Link to={"/logs"}>
-                        <Activity className="w-7 h-7 text-muted-foreground p-1 rounded-full outline-4" />
+                        <Icon size={18} classNames={{ root: 'outline-2' }} iconName={Activity} />
                     </Link>
                     <Drawer>
                         <DrawerTrigger>
-                            <BsThreeDots className="w-4 h-4 text-muted-foreground" />
+                            <Icon size={18} classNames={{ root: 'border-none' }} iconName={BsThreeDots} />
                         </DrawerTrigger>
                         <DrawerContent>
                             {
@@ -92,7 +93,6 @@ export const ProjectCard = () => {
                             }
                         </DrawerContent>
                     </Drawer>
-
                 </div>
             </CardHeader>
 
