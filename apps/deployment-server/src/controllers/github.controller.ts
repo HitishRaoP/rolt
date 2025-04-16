@@ -1,10 +1,17 @@
 import { getDomains, sendResponse } from "@rolt/utils";
 import { Request, Response } from "express";
-import { GithubCheckSchema, GithubDeploymentSchema } from "@rolt/schemas";
+import { GithubCheckSchema, GithubDeploymentSchema, GetRepoForImportSchema } from "@rolt/schemas";
 import { Deployment } from "@octokit/webhooks-types";
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
-import { Octokit } from "@octokit/rest";
+import { ZodError } from "zod";
+import { FrameWorkDetector } from "../services/framework-detector.service.js";
 
+/**
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
 export const CreateGithubDeployment = async (req: Request, res: Response) => {
     try {
         const {
@@ -63,6 +70,12 @@ export const CreateGithubDeployment = async (req: Request, res: Response) => {
     }
 }
 
+/**
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
 export const UpdateGithubCheck = async (req: Request, res: Response) => {
     try {
         const {
@@ -114,7 +127,13 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
     }
 }
 
-export const GetReposForInstallation = async (req: Request, res: Response) => {
+/**
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+export const GetReposFromInstallationId = async (req: Request, res: Response) => {
     try {
         const { installationId } = req.query as unknown as { installationId: number };
 
@@ -143,3 +162,60 @@ export const GetReposForInstallation = async (req: Request, res: Response) => {
         })
     }
 }
+
+/**
+ * Fetches a GitHub repository's metadata and detects the framework used in it.
+ *
+ * @param {Request} req - Express request object containing query parameters: `installationId`, `repo`, and `owner`.
+ * @param {Response} res - Express response object used to return the API response.
+ * @returns {Promise<Response>} A response containing the repository metadata and detected framework information.
+ *
+ * @throws {ZodError} If the query parameters do not conform to the expected schema.
+ * @throws {Error} If an unexpected error occurs during repository fetch or framework detection.
+ */
+export const GetRepoForImport = async (req: Request, res: Response) => {
+    try {
+        /**
+         * Get the Repository details
+         */
+        const { installationId, repo, owner } = GetRepoForImportSchema.parse(req.query);
+
+        const octokit = await getOctokitFromInstallationId(installationId);
+
+        const response = await octokit.rest.repos.get({
+            owner,
+            repo
+        });
+
+        /**
+         * Getting the Framework Details
+         */
+        const frameWorkDetector = new FrameWorkDetector(owner, repo, installationId);
+        const framework = await frameWorkDetector.detect();
+
+        return sendResponse({
+            res,
+            message: "Repository fetched successfully",
+            statusCode: 200,
+            data: {
+                repo: response.data,
+                importDetails: framework.data
+            }
+        });
+    } catch (error) {
+        if (error instanceof ZodError) {
+            return sendResponse({
+                res,
+                message: "Invalid request query parameters",
+                statusCode: 400,
+                data: error.message
+            });
+        }
+        return sendResponse({
+            res,
+            message: "Internal Server Error",
+            statusCode: 500,
+            data: error
+        });
+    }
+};

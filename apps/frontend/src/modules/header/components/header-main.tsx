@@ -16,12 +16,10 @@ import { Button } from "@/components/ui/button";
 import {
     Sheet,
     SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { Link } from "react-router";
+import { MenuContent } from "./menu-content";
 
 export const HeaderMain = () => {
     return (
@@ -35,7 +33,7 @@ export const HeaderMain = () => {
             <div className="flex gap-2">
                 <Drawer>
                     <DrawerTrigger>
-                        <Icon iconName={IoIosNotificationsOutline} />
+                        <Icon type="react-icon" iconName={IoIosNotificationsOutline} />
                     </DrawerTrigger>
                     <DrawerContent>
                         <DrawerHeader>
@@ -52,16 +50,10 @@ export const HeaderMain = () => {
                 </Drawer>
                 <Sheet>
                     <SheetTrigger>
-                        <Icon iconName={TbMenu} />
+                        <Icon type="react-icon" iconName={TbMenu} />
                     </SheetTrigger>
-                    <SheetContent className="w-full">
-                        <SheetHeader>
-                            <SheetTitle>Are you absolutely sure?</SheetTitle>
-                            <SheetDescription>
-                                This action cannot be undone. This will permanently delete your account
-                                and remove your data from our servers.
-                            </SheetDescription>
-                        </SheetHeader>
+                    <SheetContent className="w-full overflow-y-auto">
+                        <MenuContent />
                     </SheetContent>
                 </Sheet>
             </div>

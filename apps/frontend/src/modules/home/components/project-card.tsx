@@ -73,11 +73,11 @@ export const ProjectCard = () => {
                 {/* Right Icons */}
                 <div className="flex items-center gap-2 shrink-0">
                     <Link to={"/logs"}>
-                        <Icon size={18} classNames={{ root: 'outline-2' }} iconName={Activity} />
+                        <Icon type='react-icon' size={18} classNames={{ root: 'outline-2' }} iconName={Activity} />
                     </Link>
                     <Drawer>
                         <DrawerTrigger>
-                            <Icon size={18} classNames={{ root: 'border-none' }} iconName={BsThreeDots} />
+                            <Icon type='react-icon' size={18} classNames={{ root: 'border-none' }} iconName={BsThreeDots} />
                         </DrawerTrigger>
                         <DrawerContent>
                             {

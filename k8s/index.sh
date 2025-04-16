@@ -41,7 +41,6 @@ kubectl apply -f k8s/kibana-values.yaml
 helm repo add fluent https://fluent.github.io/helm-charts
 helm upgrade --install fluent-bit fluent/fluent-bit -f k8s/fluentbit-values.yaml
 
-
-#kubectl get secret elasticsearch-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
+# kubectl get secret elasticsearch-es-elastic-user -o=jsonpath='{.data.elastic}' | base64 --decode; echo
 #PORT FORWARDING
-tsx k8s/wait.ts
+yarn tsx k8s/wait.ts

@@ -420,7 +420,7 @@ config:
         tls On
         tls.verify Off
         HTTP_User elastic
-        HTTP_Passwd h68xlu06kulFct7H798EQC45
+        HTTP_Passwd 78MYJ74IggOir4AcQR7405n8
         Retry_Limit False
         Suppress_Type_Name On
         Trace_Error       On

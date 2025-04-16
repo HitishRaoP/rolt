@@ -37,9 +37,9 @@ const init = async () => {
 
 	app.use('/deployment', DeploymentRouter);
 
-	app.use("/webhooks", WebhookRouter)
+	app.use("/webhooks", WebhookRouter);
 
-	app.use("/github", GithubRouter)
+	app.use("/github", GithubRouter);
 
 	app.listen(DEPLOYMENT_SERVER_CONSTANTS.DEV.PORT, () => {
 		console.log(

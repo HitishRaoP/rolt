@@ -15,3 +15,5 @@ export {
 export {
 	NewProjectSchema
 } from "./src/new-project-schema"
+
+export { GetRepoForImportSchema } from "./src/get/get-repo-for-import-schema"

@@ -33,7 +33,7 @@ export const HomeMain = () => {
         <Input placeholder="Search Repositories and Projects" className="text-sm" />
         <Drawer>
           <DrawerTrigger>
-            <Icon classNames={{ root: "rounded-md p-2 bg-foreground", icon: "text-background" }} iconName={Plus} />
+            <Icon type="react-icon" classNames={{ root: "rounded-md p-2 bg-foreground", icon: "text-background" }} iconName={Plus} />
           </DrawerTrigger>
           <DrawerContent>
             {

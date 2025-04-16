@@ -52,11 +52,11 @@ export class WebHookService<T> {
              */
             payload.action === "created" && await InstallationModel.create([
                 {
+                    id: payload.installation.id,
                     owner: payload.installation.account.login,
                     installationId: payload.installation.id,
-                    ownerType: payload.requester?.type,
+                    ownerType: payload.sender.type,
                     provider: "Github",
-                    id: payload.installation.id,
                 }
             ])
             return sendResponse({
@@ -91,6 +91,7 @@ export class WebHookService<T> {
                 await this.PostAppInstall(res);
             }
         } catch (error) {
+            console.log(error);
             return sendResponse({
                 res,
                 message: "Internal Server Error handling the webook request",

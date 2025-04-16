@@ -25,7 +25,7 @@ export const Banner = ({ children, title, description, classNames, RightIcon }: 
                         {title}
                         {
                             RightIcon ?
-                                <Icon classNames={{ root: "border-none" }} iconName={RightIcon} /> : null
+                                <Icon type='react-icon' classNames={{ root: "border-none" }} iconName={RightIcon} /> : null
                         }
                     </CardTitle>
                     {

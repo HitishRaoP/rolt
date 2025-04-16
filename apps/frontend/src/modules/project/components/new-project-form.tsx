@@ -10,14 +10,11 @@ import { Input } from "@/components/ui/input"
 import { RainbowButton } from "@/components/wrappers/rainbow-button"
 import { useNewProjectForm } from "../hooks/use-new-project-form"
 import { Project } from "@rolt/types/Project"
-import { useId } from "react"
-import { Label } from "@/components/ui/label"
 import {
     Select,
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
@@ -47,7 +44,7 @@ export const NewProjectImportForm = () => {
                 <FormField
                     control={form.control}
                     name="framework"
-                    render={({ field }) => (
+                    render={() => (
                         <FormItem>
                             <FormLabel>Framework Preset</FormLabel>
                             <FormControl>

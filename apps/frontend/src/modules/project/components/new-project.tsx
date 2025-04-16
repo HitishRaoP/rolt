@@ -46,7 +46,7 @@ export const NewProject = () => {
                 </SelectItem>
                 <Link to={ROLT_GITHUB_APP_INSTALLATION_URL}>
                   <SelectItem value="3">
-                    <Icon classNames={{ root: "border-none px-0" }} size={16} iconName={Plus} />
+                    <Icon type='react-icon' classNames={{ root: "border-none px-0" }} size={16} iconName={Plus} />
                     <span className="truncate">Add Github Account</span>
                   </SelectItem>
                 </Link>
@@ -64,6 +64,7 @@ export const NewProject = () => {
               >
                 <div className="flex items-center gap-2">
                   <Icon
+                    type='react-icon'
                     classNames={{
                       root: "w-6 h-6 p-0",
                     }}

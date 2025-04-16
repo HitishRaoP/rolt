@@ -22,6 +22,7 @@ export const SlashText = ({ icon, first, second, classNames }: SlashTextProps) =
         >
             {icon && (
                 <Icon
+                    type="react-icon"
                     classNames={{
                         root: "border-none flex-shrink-0",
                         icon: "w-4 h-4 text-foreground",

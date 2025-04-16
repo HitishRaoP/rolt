@@ -7,44 +7,11 @@ import { FaGithub } from 'react-icons/fa'
 import { TbUserBolt } from 'react-icons/tb'
 import { NewProjectImportForm } from './new-project-form'
 import { File, Folder, Tree } from "@/components/wrappers/file-tree";
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Button } from '@/components/ui/button'
 
 export const NewProjectImport = () => {
     return (
         <Banner RightIcon={TbUserBolt} classNames={{ title: "text-xl", card: "bg-card" }} title='New Project'>
             <div className='bg-card p-5'>
-                <Drawer>
-                    <DrawerTrigger>
-                        <Button variant={"outline"}>
-                            Edit
-                        </Button>
-                    </DrawerTrigger>
-                    <DrawerContent>
-                        <DrawerHeader>
-                            <DrawerTitle className='text-2xl'>Root Directory</DrawerTitle>
-                            <DrawerDescription>Select the directory where your source code is located. To deploy a monorepo, create separate projects for other directories in the future.</DrawerDescription>
-                        </DrawerHeader>
-                        <FileTreeDemo />
-                        <DrawerFooter className='flex flex-row items-center justify-between'>
-                            <DrawerClose>
-                                <Button variant="outline">Cancel</Button>
-                            </DrawerClose>
-                            <DrawerClose>
-                                <Button variant="default">Continue</Button>
-                            </DrawerClose>
-                        </DrawerFooter>
-                    </DrawerContent>
-                </Drawer>
                 <div className='p-3 rounded-md border bg-background'>
                     <Text className='text-sm text-muted-foreground' content='Importing From Github' />
                     <div className='flex items-center gap-3 '>
