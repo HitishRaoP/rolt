@@ -6,36 +6,36 @@
     <h3 align="center">Rolt</h3>
 </p>
 
-ROLT is a deployment automation tool that streamlines the process from GitHub push to live preview environments using Kubernetes. This repo contains the infrastructure and logic to automatically detect frameworks, deploy environments, and provide deployment URLs with three domains per deployment.
+ROLT is a deployment automation tool that streamlines the process from GitHub push to live preview environments using Kubernetes.
 
 ---
 
-## 📸 System Architecture
+## System Architecture
 
 ![diagram-export-4-14-2025-9_06_59-PM](https://github.com/user-attachments/assets/2362dbde-30f1-4b1b-b381-cfd05f6cdd24)
 
 ---
 
-## 🧩 Key Components
+## Key Components
 
-### 🔌 Frontend (ROLT GitHub App)
+### Frontend (ROLT GitHub App)
 - Users install the ROLT GitHub App.
 - On push/create events, GitHub triggers a **Webhook** to the ROLT backend.
 
-### 🧠 Backend - Framework Detectors
+### Backend - Framework Detectors
 - Listens for webhook events.
 - Detects project framework.
 - Enqueues jobs into `deployer-queue`.
 
-### 📬 Deployer Queue
+### Deployer Queue
 - A job queue system to manage deployments.
 - Triggers a serverless function (e.g., AWS Lambda).
 
-### ⚙️ Lambda Trigger
+### Lambda Trigger
 - Pulls the code repository.
 - Initiates deployment into a **Kubernetes Cluster**.
 
-### 🐳 Kubernetes Cluster
+### Kubernetes Cluster
 - Deploys via:
   - **Traefik** for ingress.
   - **Service** and **Deployment** components.
@@ -44,10 +44,10 @@ ROLT is a deployment automation tool that streamlines the process from GitHub pu
   - `http://owner-repo.localhost:8000`
   - `http://commitsha.localhost:8000`
 
-### 🔁 CI/CD Integration
+### CI/CD Integration
 - Updates GitHub Checks and Deployment statuses via the GitHub API.
 
-### 📊 Observability
+### Observability
 - Logs collected via **Fluent-Bit**.
 - Stored in **ElasticSearch**.
 - Visualized and analyzed through:
