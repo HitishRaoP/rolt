@@ -5,6 +5,6 @@ const GithubRouter = Router();
 
 GithubRouter.post('/deployment', CreateGithubDeployment);
 
-GithubRouter.post("/check", UpdateGithubCheck)
+GithubRouter.post("/check", UpdateGithubCheck);
 
 export default GithubRouter;

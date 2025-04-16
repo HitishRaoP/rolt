@@ -2,7 +2,6 @@ import { GithubCheck, GithubCheckConclusion, GithubCheckStatus } from "@rolt/typ
 import z, { ZodType } from "zod";
 import { CreateDeploymentSchema } from "./create-deployment-schema";
 
-
 export const GithubCheckSchema = CreateDeploymentSchema.extend({
     installationId: z.number().min(2),
     commitSha: z.string().min(1),

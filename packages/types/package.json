@@ -5,7 +5,9 @@
   "license": "MIT",
   "private": true,
   "exports": {
-    "./Api" : "./src/Api.d.ts",
-    "./Deployment" : "./src/Deployment.d.ts"
+    "./Api": "./src/Api.d.ts",
+    "./Deployment": "./src/Deployment.d.ts",
+    "./Project": "./src/Project.d.ts",
+    "./User": "./src/User.d.ts"
   }
 }

@@ -21,14 +21,17 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import { Link } from "react-router";
 
 export const HeaderMain = () => {
     return (
-        <header className="flex items-center justify-between p-4  md:px-8">
-            <Avatar className="w-10 h-10">
-                <AvatarImage src="/rolt.png" className="rounded-lg" />
-                <AvatarFallback className='border'>CN</AvatarFallback>
-            </Avatar>
+        <header className="flex items-center justify-between p-4 bg-background md:px-8">
+            <Link to={"/"}>
+                <Avatar className="w-10 h-10">
+                    <AvatarImage src="/rolt.png" className="rounded-lg" />
+                    <AvatarFallback className='border'>CN</AvatarFallback>
+                </Avatar>
+            </Link>
             <div className="flex gap-2">
                 <Drawer>
                     <DrawerTrigger>

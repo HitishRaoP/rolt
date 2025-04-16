@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { GithubCheckSchema, GithubDeploymentSchema } from "@rolt/schemas";
 import { Deployment } from "@octokit/webhooks-types";
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
+import { Octokit } from "@octokit/rest";
 
 export const CreateGithubDeployment = async (req: Request, res: Response) => {
     try {

@@ -5,7 +5,7 @@ import { customAlphabet } from "nanoid";
 import { ZodError } from "zod";
 import { Octokit as OctokitRest } from "@octokit/rest"
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
-import { AppModel } from "../models/app.model.js";
+import { InstallationModel } from "../models/installation.model.js";
 
 export class DeploymentService {
     private sqsClient: SQSClient;
@@ -27,7 +27,7 @@ export class DeploymentService {
 
     private async getInstallationId() {
         try {
-            const appDoc = await AppModel.findOne({
+            const appDoc = await InstallationModel.findOne({
                 owner: this.deploymentDetails.owner,
             });
             if (!appDoc) {

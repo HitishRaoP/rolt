@@ -3,7 +3,7 @@ import { sendResponse } from "@rolt/utils";
 import { Request, Response } from "express";
 import { DeploymentService } from "../services/deployment.service.js";
 import { CreateDeploymentSchema } from "@rolt/schemas";
-import { AppModel } from "../models/app.model.js";
+import { InstallationModel } from "../models/installation.model.js";
 import { MongooseError } from "mongoose";
 import { EventType } from "@rolt/types/Deployment";
 
@@ -50,10 +50,13 @@ export class WebHookService<T> {
             /**
              * Create a Document when a New App is installed
              */
-            payload.action === "created" && await AppModel.create([
+            payload.action === "created" && await InstallationModel.create([
                 {
                     owner: payload.installation.account.login,
                     installationId: payload.installation.id,
+                    ownerType: payload.requester?.type,
+                    provider: "Github",
+                    id: payload.installation.id,
                 }
             ])
             return sendResponse({

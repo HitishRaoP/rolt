@@ -8,7 +8,7 @@ export const GithubBranch = ({ branch }: GithubBranchProps) => {
     return (
         <div className="flex items-center gap-1">
             <IoIosGitBranch />
-            <span>
+            <span className="text-sm font-mono">
                 {branch}
             </span>
         </div>

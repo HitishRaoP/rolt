@@ -28,12 +28,12 @@ const NEW_NAV_LINKS = [
 
 export const HomeMain = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-5">
       <div className="flex gap-3">
         <Input placeholder="Search Repositories and Projects" className="text-sm" />
         <Drawer>
           <DrawerTrigger>
-            <Icon classNames={{ root: "rounded-md p-2 bg-foreground" }} className="text-background" iconName={Plus} />
+            <Icon classNames={{ root: "rounded-md p-2 bg-foreground", icon: "text-background" }} iconName={Plus} />
           </DrawerTrigger>
           <DrawerContent>
             {

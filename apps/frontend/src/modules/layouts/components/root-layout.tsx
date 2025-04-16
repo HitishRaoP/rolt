@@ -5,7 +5,7 @@ export const RootLayout = () => {
     return (
         <div>
             <HeaderMain />
-            <div className='w-full max-w-7xl p-5 mx-auto container'>
+            <div className='w-full max-w-7xl sm:p-5 mx-auto container'>
                 <Outlet />
             </div>
         </div>

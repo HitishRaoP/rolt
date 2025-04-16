@@ -11,3 +11,7 @@ export {
 export {
 	GithubCheckSchema
 } from "./src/github-check-schema"
+
+export {
+	NewProjectSchema
+} from "./src/new-project-schema"

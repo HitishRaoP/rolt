@@ -37,6 +37,11 @@
 	--sidebar-accent-foreground: oklch(0.205 0 0);
 	--sidebar-border: oklch(0.922 0 0);
 	--sidebar-ring: oklch(0.708 0 0);
+	--color-1: 0 100% 63%;
+	--color-2: 270 100% 63%;
+	--color-3: 210 100% 63%;
+	--color-4: 195 100% 63%;
+	--color-5: 90 100% 63%;
 }
 
 .dark {
@@ -111,6 +116,16 @@
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
+
+	--animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+	@keyframes rainbow {
+		0% {
+			background-position: 0%;
+		}
+		100% {
+			background-position: 200%;
+		}
+	}
 }
 
 @layer base {
@@ -120,5 +135,20 @@
 	body {
 		@apply bg-background text-foreground;
 		font-family: 'Inter Variable', sans-serif;
+	}
+}
+
+@keyframes spinnerFade {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.2;
+	}
+}
+
+@layer utilities {
+	.animate-spinnerFade {
+		animation: spinnerFade 1.2s linear infinite;
 	}
 }
