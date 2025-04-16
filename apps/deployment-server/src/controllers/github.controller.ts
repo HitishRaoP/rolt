@@ -113,3 +113,33 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
         })
     }
 }
+
+export const GetReposForInstallation = async (req: Request, res: Response) => {
+    try {
+        const { installationId } = req.query as unknown as { installationId: number };
+
+        /**
+         * Create an instance For the Installation Octokit Wrapper
+         */
+        const octokit = await getOctokitFromInstallationId(installationId);
+
+        /**
+         * Calling the API
+         */
+        const response = await octokit.rest.apps.listReposAccessibleToInstallation();
+
+        return sendResponse({
+            res,
+            message: "Fetched repositories successfully",
+            statusCode: 200,
+            data: response.data.repositories
+        });
+    } catch (error) {
+        return sendResponse({
+            res,
+            message: "Internal Server Error",
+            statusCode: 500,
+            data: error
+        })
+    }
+}
