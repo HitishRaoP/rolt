@@ -13,6 +13,7 @@ import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import { Searchbar } from "@/components/wrappers/search-bar"
 import { signInWithGithub } from "@/hooks/use-auth"
 import { toast } from "sonner"
+import { FaGithub } from "react-icons/fa"
 
 const NEW_NAV_LINKS = [
   {
@@ -46,10 +47,8 @@ export const HomeMain = () => {
   log()
   return (
     <div className="space-y-6 p-5 text-foreground">
-      <Button onClick={()=> toast.success("Test", {
-
-      })}>Test</Button>
       <Button onClick={handleLogin} variant={"outline"}>
+        <Icon type="react-icon" classNames={{ root: "border-none" }} iconName={FaGithub} />
         Sign in with GitHub
       </Button>
       <div className="flex gap-3">

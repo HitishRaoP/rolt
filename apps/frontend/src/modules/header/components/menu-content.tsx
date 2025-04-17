@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useMenuContent } from "../hooks/use-menu-content"
 import { Link } from "react-router"
 import { Icon } from "@/components/ui/icon"
+import { Text } from "@/components/ui/text"
+import { ModeToggle } from "@/components/wrappers/mode-toggle"
 
 export function MenuContent() {
     const { userEmail, userName, isOnline } = useMenuContent()
@@ -46,6 +48,11 @@ export function MenuContent() {
                     <span className="text-sm">Log Out</span>
                 </button>
 
+                <div className="flex items-center justify-between">
+                    <Text content="Theme" />
+                    <ModeToggle />
+
+                </div>
                 {/* Resources Section */}
                 <div className="mt-6">
                     <h3 className="text-sm font-medium mb-4">Resources</h3>
