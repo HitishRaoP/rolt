@@ -1,13 +1,12 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Sun, Moon, Laptop} from "lucide-react"
 import { useMenuContent } from "../hooks/use-menu-content"
 import { Link } from "react-router"
 import { Icon } from "@/components/ui/icon"
 
 export function MenuContent() {
-    const { activeTheme, setActiveTheme, userEmail, userName, isOnline } = useMenuContent()
+    const { userEmail, userName, isOnline } = useMenuContent()
 
     return (
         <div className="flex flex-col h-full">
@@ -41,31 +40,6 @@ export function MenuContent() {
                 <Link to="/settings" className="flex items-center justify-between py-3 border-b">
                     <span className="text-sm">Account Settings</span>
                 </Link>
-
-                {/* Theme Selector */}
-                <div className="flex items-center justify-between py-3 border-b">
-                    <span className="text-sm">Theme</span>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setActiveTheme("light")}
-                            className={`p-1 rounded-md ${activeTheme === "light" ? "bg-gray-200" : ""}`}
-                        >
-                            <Sun className="h-5 w-5 text-gray-500" />
-                        </button>
-                        <button
-                            onClick={() => setActiveTheme("dark")}
-                            className={`p-1 rounded-md ${activeTheme === "dark" ? "bg-gray-200" : ""}`}
-                        >
-                            <Moon className="h-5 w-5 text-gray-500" />
-                        </button>
-                        <button
-                            onClick={() => setActiveTheme("system")}
-                            className={`p-1 rounded-md ${activeTheme === "system" ? "bg-gray-200" : ""}`}
-                        >
-                            <Laptop className="h-5 w-5 text-gray-500" />
-                        </button>
-                    </div>
-                </div>
 
                 {/* Log Out */}
                 <button className="flex items-center justify-between py-3 border-b w-full text-left">

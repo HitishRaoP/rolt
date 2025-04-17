@@ -1,4 +1,3 @@
-import { Input } from "@/components/ui/input"
 import { ProjectCard } from "./project-card"
 import {
   Drawer,
@@ -10,6 +9,10 @@ import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
 import { Plus } from "lucide-react"
 import { Link } from "react-router"
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+import { Searchbar } from "@/components/wrappers/search-bar"
+import { signInWithGithub } from "@/hooks/use-auth"
+import { toast } from "sonner"
 
 const NEW_NAV_LINKS = [
   {
@@ -27,10 +30,30 @@ const NEW_NAV_LINKS = [
 ]
 
 export const HomeMain = () => {
+  const handleLogin = async () => {
+    try {
+      const user = await signInWithGithub()
+      toast.success(`Welcome ${user.displayName || user.email}`)
+    } catch {
+      toast.error("Login failed.")
+    }
+  }
+  async function log() {
+    const { user } = await FirebaseAuthentication.getCurrentUser()
+    console.log(user);
+  }
+
+  log()
   return (
-    <div className="space-y-6 p-5">
+    <div className="space-y-6 p-5 text-foreground">
+      <Button onClick={()=> toast.success("Test", {
+
+      })}>Test</Button>
+      <Button onClick={handleLogin} variant={"outline"}>
+        Sign in with GitHub
+      </Button>
       <div className="flex gap-3">
-        <Input placeholder="Search Repositories and Projects" className="text-sm" />
+        <Searchbar placeholder="Search Repositories and Projects" />
         <Drawer>
           <DrawerTrigger>
             <Icon type="react-icon" classNames={{ root: "rounded-md p-2 bg-foreground", icon: "text-background" }} iconName={Plus} />

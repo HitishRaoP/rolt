@@ -12,11 +12,11 @@ type SearchbarProps = Omit<React.ComponentProps<"input">, "className"> & {
 
 export function Searchbar({ classNames, ...props }: SearchbarProps) {
     return (
-        <div className="*:not-first:mt-2">
+        <div className="*:not-first:mt-2 w-full">
             <div className={cn("relative", classNames?.root)}>
                 <Input
                     {...props}
-                    className={cn("peer ps-9 pe-9 text-sm", classNames?.input)}
+                    className={cn("peer ps-9  text-sm", classNames?.input)}
                     type="search"
                 />
                 <div className="text-muted-foreground/80 pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">

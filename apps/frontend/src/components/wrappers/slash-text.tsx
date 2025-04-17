@@ -16,7 +16,7 @@ export const SlashText = ({ icon, first, second, classNames }: SlashTextProps) =
     return (
         <div
             className={cn(
-                "flex items-center rounded-full py-1.5 bg-secondary text-sm overflow-hidden",
+                "flex items-center rounded-full bg-secondary text-sm overflow-hidden",
                 classNames?.root
             )}
         >
