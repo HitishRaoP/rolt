@@ -35,8 +35,8 @@ export const HomeMain = () => {
     try {
       const user = await signInWithGithub()
       toast.success(`Welcome ${user.displayName || user.email}`)
-    } catch {
-      toast.error("Login failed.")
+    } catch (error) {
+      toast.error(`Login failed. ${error}`)
     }
   }
   async function log() {

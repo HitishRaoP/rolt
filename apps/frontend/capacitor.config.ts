@@ -9,7 +9,7 @@ const config: CapacitorConfig = {
       skipNativeAuth: false,
       providers: ["github.com"]
     }
-  }
+  },
 };
 
 export default config;

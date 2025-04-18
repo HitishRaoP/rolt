@@ -3,7 +3,7 @@ import { Outlet } from 'react-router'
 
 export const RootLayout = () => {
     return (
-        <div>
+        <div className='py-2'>
             <HeaderMain />
             <div className='w-full max-w-7xl sm:p-5 mx-auto container'>
                 <Outlet />

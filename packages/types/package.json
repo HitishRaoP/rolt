@@ -7,7 +7,7 @@
   "exports": {
     "./Api": "./src/Api.d.ts",
     "./Deployment": "./src/Deployment.d.ts",
-    "./Project": "./src/Project.d.ts",
+    "./Project": "./src/Project.ts",
     "./User": "./src/User.d.ts"
   }
 }
