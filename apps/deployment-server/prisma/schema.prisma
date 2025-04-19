@@ -10,7 +10,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String
+model Installation {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  owner          String
+  installationId Int       @unique
+  ownerType      OwnerType
+  provider       Provider
+}
+
+enum OwnerType {
+  Bot
+  User
+  Organization
+}
+
+enum Provider {
+  Github
 }
