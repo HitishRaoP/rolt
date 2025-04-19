@@ -7,6 +7,7 @@ import { sendResponse } from '@rolt/utils';
 import WebhookRouter from './routes/webhook.route.js';
 import mongoose from 'mongoose';
 import GithubRouter from './routes/github.route.js';
+import { deploymentDB } from './db/client.js';
 
 const app = express();
 

@@ -4,6 +4,7 @@ import { getOctokitFromInstallationId } from '../utils/get-octokit-from-Installa
 import fs from 'node:fs/promises';
 import type { InstallationAccessTokenAuthentication } from '@octokit/auth-app';
 import { ApiResponse } from '@rolt/types/Api';
+import { deploymentDB } from '../db/client.js';
 
 /**
  * A class to detect frontend frameworks used in a GitHub repository.
@@ -52,7 +53,7 @@ export class FrameWorkDetector {
      */
     private async clone(): Promise<void> {
         const octokit = await getOctokitFromInstallationId(this.installationId);
-
+        
         const { token } = await octokit.auth({
             type: 'installation',
         }) as InstallationAccessTokenAuthentication;

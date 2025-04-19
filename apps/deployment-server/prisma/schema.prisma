@@ -1,0 +1,16 @@
+//https://www.prisma.io/docs/guides/turborepo#1-create-your-monorepo-using-turborepo
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  email String
+}

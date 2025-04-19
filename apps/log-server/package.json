@@ -9,15 +9,21 @@
 		"build": "rm -rf dist && tsc",
 		"start": "node dist/api/index.js",
 		"lint": "eslint .",
-		"check-types": "tsc --noEmit --pretty"
+		"check-types": "tsc --noEmit --pretty",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev --skip-generate",
+		"db:deploy": "prisma migrate deploy",
+		"db:push": "prisma db push --skip-generate"
 	},
 	"devDependencies": {
 		"@rolt/typescript-config": "*",
 		"@types/cors": "^2.8.17",
 		"@types/express": "^5.0.0",
+		"prisma": "^6.6.0",
 		"tsx": "^4.19.3"
 	},
 	"dependencies": {
+		"@prisma/client": "^6.6.0",
 		"@rolt/utils": "*",
 		"cors": "^2.8.5",
 		"dotenv": "^16.4.7",
