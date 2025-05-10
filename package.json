@@ -3,19 +3,17 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "start": "yarn run build && yarn start",
+    "start": "bun run build && bun start",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "test": "turbo test",
     "format": "prettier \"{apps,packages}/**/*.{ts,tsx,md}\" --ignore-path .gitignore",
-    "format:write": "yarn format --write",
-    "format:check": "yarn format --check",
+    "format:write": "bun format --write",
+    "format:check": "bun format --check",
     "check-types": "turbo run check-types",
-    "validate": "yarn format:write && yarn check-types && yarn lint && yarn build",
+    "validate": "bun format:write && bun check-types && bun lint && bun build",
     "postinstall": "husky",
     "bootstrap": "turbo run bootstrap",
-    "ionic:build": "npm run build",
-    "ionic:serve": "npm run start",
     "scripts": "sh scripts/index.sh"
   },
   "devDependencies": {
@@ -36,7 +34,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "bun@1.2.5",
   "workspaces": {
     "packages": [
       "packages/*",

@@ -50,14 +50,14 @@ async function random() {
 }
 
 async function createCheck() {
-  const octokit = await app.getInstallationOctokit(64259490);
+  const octokit = await app.getInstallationOctokit(64689377);
 
   const { data: check } = await octokit.rest.checks.update({
     owner: "HitishRaoP",
-    repo: "rolt",
+    repo: "vite",
     name: "CI Check",
-    check_run_id: 40513056792,
-    head_sha: "f7d7976d0089196de26557a4aa47368d9710c545", // Use the commit SHA you want to associate the check with
+    check_run_id: 41957883577,
+    head_sha: "866877795ae8fc156b5302770c1b40420af5aa1b", // Use the commit SHA you want to associate the check with
     status: "completed",  // or "completed"
     conclusion: "failure",
     output: {

@@ -25,7 +25,6 @@ const waitForPodsReady = async (namespace: string, labelSelector: string, name: 
 
 (async () => {
   await waitForPodsReady('traefik-v2', 'app.kubernetes.io/name=traefik', 'Traefik');
-  await waitForPodsReady('default', 'kibana.k8s.elastic.co/name', 'Kibana');
 
   ora('Starting port forwarding...').start();
 
@@ -35,11 +34,7 @@ const waitForPodsReady = async (namespace: string, labelSelector: string, name: 
     stdio: 'inherit',
   });
 
-  const kibanaForward = spawn('kubectl', ['port-forward', 'service/kibana-kb-http', '5601'], {
-    stdio: 'inherit',
-  });
-
-  processes.push(traefikForward, kibanaForward);
+  processes.push(traefikForward);
 
   const shutdown = () => {
     console.log('\nStopping port forwarding...');

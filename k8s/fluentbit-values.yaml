@@ -413,20 +413,11 @@ config:
   ## https://docs.fluentbit.io/manual/pipeline/outputs
   outputs: |
     [OUTPUT]
-        Name es
-        Match **
-        Host elasticsearch-es-http.default.svc
-        Port 9200
-        tls On
-        tls.verify Off
-        HTTP_User elastic
-        HTTP_Passwd 78MYJ74IggOir4AcQR7405n8
-        Retry_Limit False
-        Suppress_Type_Name On
-        Trace_Error       On
-        Trace_Output      On
-        Index rolt
-
+        Name  http
+        Host  smee.io
+        tls   On
+        URI   /R7CnnfFPlA0XiBv
+        Format json
 
   ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/upstream-servers
   ## This configuration is deprecated, please use `extraFiles` instead.

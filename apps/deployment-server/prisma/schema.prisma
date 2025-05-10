@@ -1,5 +1,3 @@
-//https://www.prisma.io/docs/guides/turborepo#1-create-your-monorepo-using-turborepo
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -12,7 +10,7 @@ datasource db {
 
 model Installation {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  owner          String
+  owner          String    @unique
   installationId Int       @unique
   ownerType      OwnerType
   provider       Provider

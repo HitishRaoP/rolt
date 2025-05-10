@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Log Viewer</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: monospace;
+      background: #111;
+      color: #eee;
+      padding: 1rem;
+    }
+    .log {
+      margin-bottom: 0.5rem;
+    }
+    .success {
+      color: #00ff00;
+    }
+    .error {
+      color: #ff5555;
+    }
+    .info {
+      color: #cccccc;
+    }
+    .timestamp {
+      font-size: 0.8rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <h2>Deployment Logs</h2>
+  <div id="logs"></div>
+
+  <script>
+    const socket = io("http://localhost:8085"); // Replace with your server if needed
+    const deploymentId = "d0sdyeaqpa0"; // Replace with your test deployment ID
+
+    socket.on("connect", () => {
+      console.log("Connected to WebSocket server");
+      socket.emit("subscribe", deploymentId);
+    });
+
+    socket.on("log", (logData) => {
+      const { log, timestamp, type } = logData;
+
+      const logsDiv = document.getElementById("logs");
+      const logEntry = document.createElement("div");
+      logEntry.className = `log ${type}`;
+
+      logEntry.innerHTML = `
+        <div>${JSON.stringify(log)}</div>
+        <div class="timestamp">${timestamp}</div>
+      `;
+
+      logsDiv.appendChild(logEntry);
+    });
+  </script>
+</body>
+</html>

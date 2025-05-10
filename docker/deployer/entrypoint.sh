@@ -1,6 +1,9 @@
 #!/bin/sh
 
-cd /usr/src/app
+mkdir -p /usr/src/app/"$OWNER-$REPO"
+
+# Change into the directory
+cd /usr/src/app/"$OWNER-$REPO"
 
 # Force application to run on port 3000
 PORT=3000

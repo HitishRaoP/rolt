@@ -6,6 +6,7 @@ import { ZodError } from "zod";
 import { Octokit as OctokitRest } from "@octokit/rest"
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
 import { InstallationModel } from "../models/installation.model.js";
+import { deploymentDB } from "../db/client.js";
 
 export class DeploymentService {
     private sqsClient: SQSClient;
@@ -27,13 +28,15 @@ export class DeploymentService {
 
     private async getInstallationId() {
         try {
-            const appDoc = await InstallationModel.findOne({
-                owner: this.deploymentDetails.owner,
+            const appDoc = await deploymentDB.installation.findUnique({
+                where: {
+                    owner: this.deploymentDetails.owner,
+                }
             });
             if (!appDoc) {
                 throw new Error(`No app installation found for owner: ${this.deploymentDetails.owner}`);
             }
-            return appDoc.installationId as number;
+            return appDoc.installationId;
         } catch (error) {
             throw new Error(`Failed to get installation ID: ${error}`);
         }

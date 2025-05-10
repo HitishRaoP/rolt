@@ -17,9 +17,13 @@ ENV HOST_IP=""
 WORKDIR /usr/src/app
 
 RUN npm i -g pnpm
-# Put entrypoint outside app folder
-COPY entrypoint.sh /entrypoint.sh
 
-RUN chmod +x /entrypoint.sh
+COPY . .
 
-ENTRYPOINT ["/entrypoint.sh"]
+RUN pnpm install
+
+RUN pnpm build
+
+RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["node", "dist/index.js"]

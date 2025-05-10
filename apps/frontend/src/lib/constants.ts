@@ -1,1 +1,0 @@
-export const ROLT_GITHUB_APP_INSTALLATION_URL = "http://github.com/apps/rolt-tech/installations/new"

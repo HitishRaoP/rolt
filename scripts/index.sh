@@ -7,7 +7,7 @@ export TSX_NO_LOG=true
 ############################
 #BANNER
 ############################
-yarn tsx scripts/banner.ts
+bun scripts/banner.ts
 
 ############################
 #GENERATE THE K8s KEYS FOR TERRAFORM
@@ -26,6 +26,16 @@ echo "Pushing Deployer Docker image to Minikube"
 (cd "$DEPLOYER_DIR" && sh "$PUSH_SCRIPT")
 echo "Docker image pushed successfully."
 eval $(minikube docker-env -u)
+
+############################
+# LOCALSTACK CONTAINER
+############################
+echo "Starting LocalStack container..."
+pushd docker/localstack
+docker compose up -d
+popd
+echo "LocalStack started."
+
 
 ############################
 # TERRAFORM
@@ -51,7 +61,6 @@ LOGGING_URL='http://localhost:8085/logs'
 npx concurrently \
   "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \
   "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\""
-
 
 ############################
 #Forward the Traefik Port

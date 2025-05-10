@@ -6,21 +6,9 @@ services:
       - '4566:4566' # LocalStack Gateway
       - '4510-4559:4510-4559' # External services port range
     environment:
-      - LOCALSTACK_AUTH_TOKEN=ls-BIVoKUpE-6112-LAGu-tebi-8566XEbu07ef
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - DEBUG=${DEBUG:-0}
       - PERSISTENCE=${PERSISTENCE:-0}
     volumes:
       - '${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack'
       - '/var/run/docker.sock:/var/run/docker.sock'
-
-  # traefik:
-  #   image: traefik:v2.10
-  #   command:
-  #     - "--api.insecure=true"
-  #     - "--providers.docker=true"
-  #     - "--entrypoints.web.address=:80"
-  #   ports:
-  #     - "8082:80"
-  #     - "8080:8080"
-  #   volumes:
-  #     - "/var/run/docker.sock:/var/run/docker.sock"
