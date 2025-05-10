@@ -10,6 +10,13 @@ export TSX_NO_LOG=true
 bun scripts/banner.ts
 
 ############################
+#MINIKUBE
+############################
+sh k8s/index.sh
+
+
+
+############################
 #GENERATE THE K8s KEYS FOR TERRAFORM
 ############################
 sh k8s/keys.sh
@@ -60,13 +67,10 @@ LOGGING_URL='http://localhost:8085/logs'
 
 npx concurrently \
   "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \
-  "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\""
+  "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\"" \
+  "kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2"
 
 ############################
 #Forward the Traefik Port
-#TEMPORARY FIX
 ############################
-#kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2
-
-
-
+kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2

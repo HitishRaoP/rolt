@@ -13,8 +13,7 @@
     "check-types": "turbo run check-types",
     "validate": "bun format:write && bun check-types && bun lint && bun build",
     "postinstall": "husky",
-    "bootstrap": "turbo run bootstrap",
-    "scripts": "sh scripts/index.sh"
+    "bootstrap": "sh scripts/index.sh && bun dev"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

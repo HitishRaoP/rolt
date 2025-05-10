@@ -3,9 +3,16 @@
 set -e
 
 #################
+# DELETE EXISTING MINIKUBE
+#################
+minikube delete
+
+
+#################
 #MINIKUBE
 #################
 minikube start --driver=docker --ports 52335:8443
+
 
 #################
 # TRAEFIK
@@ -20,6 +27,3 @@ helm install traefik traefik/traefik \
   --set dashboard.enabled=true \
   --set ingressRoute.dashboard.enabled=true \
   --set service.enabled=true
-
-#PORT FORWARDING
-bun tsx k8s/wait.ts

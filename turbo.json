@@ -30,12 +30,6 @@
 			"cache": false,
 			"persistent": true
 		},
-		"bootstrap": {
-			"dependsOn": [
-				"^bootstrap"
-			],
-			"cache": false
-		},
 		"db:generate": {
 			"cache": false
 		},
