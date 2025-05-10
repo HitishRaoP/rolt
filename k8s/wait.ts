@@ -18,7 +18,7 @@ const waitForPodsReady = async (namespace: string, labelSelector: string, name: 
         spinner.succeed(`${name} pods are ready`);
         break;
       }
-    } catch {}
+    } catch { }
     await sleep(2000);
   }
 };
