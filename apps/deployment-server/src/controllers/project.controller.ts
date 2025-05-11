@@ -38,6 +38,7 @@ export const GetProjectsForUser = async (req: Request, res: Response) => {
                 userId
             }
         });
+
         return sendResponse({
             res,
             message: `Projects Successfully Fetched for user: ${userId}`,
