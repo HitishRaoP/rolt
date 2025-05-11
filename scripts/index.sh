@@ -70,7 +70,7 @@ SMEE_URL="https://smee.io/R4afGEA1VtckDWo"
 
 #LOG SERVER
 LOGGING_SMEE='https://smee.io/R7CnnfFPlA0XiBv'
-LOGGING_URL='http://localhost:8085/logs/live'
+LOGGING_URL='http://localhost:8085/logs/k8s'
 
 npx concurrently \
   "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \

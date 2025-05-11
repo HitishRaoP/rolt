@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { getLiveLogsForDeployment, getLogsForDeployment } from "../controllers/logs.controller";
+import { getLogsFromKubernetes, getLiveLogsForDeployment } from "../controllers/logs.controller";
 
 const LogRouter = Router();
 
-LogRouter.get("/", getLogsForDeployment);
+LogRouter.post("/k8s", getLogsFromKubernetes);
 
-LogRouter.post("/live", getLiveLogsForDeployment)
+LogRouter.get("/live", getLiveLogsForDeployment);
 
 export { LogRouter }
