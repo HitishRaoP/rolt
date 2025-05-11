@@ -8,6 +8,7 @@
     "./Api": "./src/Api.d.ts",
     "./Deployment": "./src/Deployment.d.ts",
     "./Project": "./src/Project.ts",
-    "./User": "./src/User.d.ts"
+    "./User": "./src/User.d.ts",
+    "./Log": "./src/Log.d.ts"
   }
 }

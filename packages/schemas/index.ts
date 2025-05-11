@@ -13,7 +13,8 @@ export {
 } from "./src/github-check-schema"
 
 export {
-	NewProjectSchema
-} from "./src/new-project-schema"
+	CreateProjectSchema,
+	type CreateProjectType
+} from "./src/create-project-schema"
 
 export { GetRepoForImportSchema } from "./src/get/get-repo-for-import-schema"

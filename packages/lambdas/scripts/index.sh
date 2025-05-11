@@ -1,19 +1,21 @@
 #!/bin/sh
 
-echo "Building your Lambda function..."
+echo "Building all Lambda functions in src/..."
 
-FOLDER_NAME="$1"
+for dir in src/*/; do
+    FOLDER_NAME=$(basename "$dir")
 
-if [ -z "$FOLDER_NAME" ]; then
-    echo "Please provide the folder name"
-    exit 1
-fi
+    echo "----------------------------------------"
+    echo "Building function: $FOLDER_NAME"
+    echo "----------------------------------------"
 
-#Make the function name available for other scripts
-export FOLDER_NAME
+    export FOLDER_NAME
 
-sh scripts/prebuild.sh
-sh scripts/build.sh
-sh scripts/postbuild.sh
+    sh scripts/prebuild.sh
+    sh scripts/build.sh
+    sh scripts/postbuild.sh
 
-echo "All done for function: $FOLDER_NAME"
+    echo "✅ Done for function: $FOLDER_NAME"
+done
+
+echo "🎉 All functions built successfully."

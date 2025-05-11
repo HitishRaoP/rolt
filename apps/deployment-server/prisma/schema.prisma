@@ -9,11 +9,71 @@ datasource db {
 }
 
 model Installation {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  installationId Int       @id @map("_id")
   owner          String    @unique
-  installationId Int       @unique
   ownerType      OwnerType
   provider       Provider
+}
+
+model Deployment {
+  deploymentId String       @id @default(uuid()) @map("_id")
+  checkRunId   Int          @unique
+  status       RoltStatus
+  gitMetadata  GitMetadata?
+  domains      Domains?
+  environment  Environment
+  isCurrent    Boolean
+  project      Project      @relation(fields: [projectId], references: [projectId])
+  projectId    String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model GitMetadata {
+  commitSha        String
+  commitMessage    String
+  commitRef        String
+  commitAuthorName String
+  deployment       Deployment @relation(fields: [deploymentId], references: [deploymentId])
+  deploymentId     String     @id @map("_id")
+}
+
+model Domains {
+  project       String
+  deploymentSha String
+  commitSha     String
+  deployment    Deployment @relation(fields: [deploymentId], references: [deploymentId])
+  deploymentId  String     @id @map("_id")
+}
+
+model Project {
+  projectId            String                 @id @default(uuid()) @map("_id")
+  userId               String
+  githubRepository     String                 @unique
+  name                 String
+  framework            FrameworkEnum
+  installCommand       String?                @default("npm run install") @map("install_command")
+  buildCommand         String?                @default("npm run build") @map("build_command")
+  rootDirectory        String                 @default("./")
+  outputDirectory      String?                @default("dist") @map("out_dir")
+  environmentVariables EnvironmentVariables[]
+  deployments          Deployment[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+}
+
+model EnvironmentVariables {
+  key       String  @id @map("_id")
+  value     String
+  project   Project @relation(fields: [projectId], references: [projectId])
+  projectId String
+}
+
+enum FrameworkEnum {
+  Vite
+  Next_js
+  Express_js
+  Other
 }
 
 enum OwnerType {
@@ -24,4 +84,16 @@ enum OwnerType {
 
 enum Provider {
   Github
+}
+
+enum Environment {
+  Production
+  Development
+}
+
+enum RoltStatus {
+  Queued
+  Error
+  Pending
+  Ready
 }

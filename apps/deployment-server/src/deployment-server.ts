@@ -6,12 +6,9 @@ import { DEPLOYMENT_SERVER_CONSTANTS } from './constants/deployment-server-const
 import { sendResponse } from '@rolt/utils';
 import WebhookRouter from './routes/webhook.route.js';
 import GithubRouter from './routes/github.route.js';
+import { ProjectRouter } from './routes/project.route.js';
 
 const app = express();
-
-async function connectDB(){
-	
-}
 
 const init = async () => {
 
@@ -32,6 +29,8 @@ const init = async () => {
 	app.use("/webhooks", WebhookRouter);
 
 	app.use("/github", GithubRouter);
+
+	app.use("/project", ProjectRouter)
 
 	app.listen(DEPLOYMENT_SERVER_CONSTANTS.DEV.PORT, () => {
 		console.log(

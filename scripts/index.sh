@@ -15,7 +15,6 @@ bun scripts/banner.ts
 sh k8s/index.sh
 
 
-
 ############################
 #GENERATE THE K8s KEYS FOR TERRAFORM
 ############################
@@ -43,6 +42,14 @@ docker compose up -d
 popd
 echo "LocalStack started."
 
+############################
+# UPDATE LAMBDA FUNCTIONS
+############################
+echo "Updating all Lambda functions in packages/lambdas"
+pushd packages/lambdas
+bun run build
+popd
+echo "All Lambda functions built successfully"
 
 ############################
 # TERRAFORM
@@ -63,14 +70,9 @@ SMEE_URL="https://smee.io/R4afGEA1VtckDWo"
 
 #LOG SERVER
 LOGGING_SMEE='https://smee.io/R7CnnfFPlA0XiBv'
-LOGGING_URL='http://localhost:8085/logs'
+LOGGING_URL='http://localhost:8085/logs/live'
 
 npx concurrently \
   "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \
   "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\"" \
   "kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2"
-
-############################
-#Forward the Traefik Port
-############################
-kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2

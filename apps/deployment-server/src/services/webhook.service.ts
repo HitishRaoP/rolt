@@ -1,12 +1,11 @@
 import { InstallationCreatedEvent, PushEvent } from "@octokit/webhooks-types";
 import { sendResponse } from "@rolt/utils";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { DeploymentService } from "../services/deployment.service.js";
 import { CreateDeploymentSchema } from "@rolt/schemas";
-import { InstallationModel } from "../models/installation.model.js";
-import { MongooseError } from "mongoose";
 import { EventType } from "@rolt/types/Deployment";
-
+import { deploymentDB } from "../db/client.js";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 export class WebHookService<T> {
     private event: EventType
@@ -50,25 +49,24 @@ export class WebHookService<T> {
             /**
              * Create a Document when a New App is installed
              */
-            payload.action === "created" && await InstallationModel.create([
-                {
-                    id: payload.installation.id,
-                    owner: payload.installation.account.login,
+            payload.action === "created" && await deploymentDB.installation.create({
+                data: {
                     installationId: payload.installation.id,
+                    owner: payload.installation.account.login,
                     ownerType: payload.sender.type,
                     provider: "Github",
                 }
-            ])
+            })
             return sendResponse({
                 res,
                 message: "App installation saved",
                 statusCode: 201,
             });
         } catch (error) {
-            if (error instanceof MongooseError) {
+            if (error instanceof PrismaClientKnownRequestError) {
                 return sendResponse({
                     res,
-                    message: "Failed to update Database",
+                    message: "Prisma Failed to update Database",
                     statusCode: 500,
                     data: error
                 })

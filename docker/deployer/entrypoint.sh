@@ -13,6 +13,9 @@ echo "CHECK_RUN_ID=$CHECK_RUN_ID"
 echo "OWNER=$OWNER"
 echo "REPO=$REPO"
 echo "COMMIT_SHA=$COMMIT_SHA"
+echo "COMMIT_REF=$COMMIT_REF"
+echo "COMMIT_AUTHOR_NAME=$COMMIT_AUTHOR_NAME"
+echo "COMMIT_MESSAGE=$COMMIT_MESSAGE"
 echo "REF=$REF"
 echo "DEPLOYMENT_ID=$DEPLOYMENT_ID"
 echo "HOST_IP"="$HOST_IP"
@@ -41,7 +44,12 @@ update_check() {
       "installationId": '"$INSTALLATION_ID"',
       "owner": "'"$OWNER"'",
       "repo": "'"$REPO"'",
-      "commitSha": "'"$COMMIT_SHA"'",
+      "gitMetadata": {
+        "commitSha": "'"$COMMIT_SHA"'",
+        "commitMessage": "'"$COMMIT_MESSAGE"'",
+        "commitRef": "'"$COMMIT_REF"'",
+        "commitAuthorName": "'"$COMMIT_AUTHOR_NAME"'"
+      },
       "status": "'"$1"'",
       '"$CONCLUSION_LINE"'
       "checkRunId": '"$CHECK_RUN_ID"',
@@ -59,7 +67,12 @@ create_deployment() {
       "owner": "'"$OWNER"'",
       "repo": "'"$REPO"'",
       "ref": "'"$REF"'",
-      "commitSha": "'"$COMMIT_SHA"'",
+      "gitMetadata": {
+        "commitSha": "'"$COMMIT_SHA"'",
+        "commitMessage": "'"$COMMIT_MESSAGE"'",
+        "commitRef": "'"$COMMIT_REF"'",
+        "commitAuthorName": "'"$COMMIT_AUTHOR_NAME"'"
+      },
       "deploymentId": "'"$DEPLOYMENT_ID"'"
     }'
 }

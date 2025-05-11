@@ -1,7 +1,7 @@
 import * as k8s from "@kubernetes/client-node";
-import { CreateDeploymentResponse } from "@rolt/types/Deployment";
+import { DeploymentExtended } from "@rolt/types/Deployment";
 
-export const service = (deploymentResponse: CreateDeploymentResponse) => {
+export const service = (deploymentResponse: DeploymentExtended) => {
     const { deploymentId } = deploymentResponse;
 
     const service: k8s.V1Service = {
@@ -24,6 +24,6 @@ export const service = (deploymentResponse: CreateDeploymentResponse) => {
             ]
         }
     }
-    
+
     return service
 }

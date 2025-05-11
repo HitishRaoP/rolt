@@ -1,43 +1,50 @@
-export type CreateDeployment = {
-	owner: string;
-	repo: string;
-	ref?: string;
-	buildCommand?: string;
-	startCommand?: string;
-};
+import { Project } from "./Project";
 
-export type CreateDeploymentResponse = CreateDeployment & {
+export type Environment = "Production" | "Development"
+
+export type RoltStatus = "Queued" | "Error" | "Pending" | "Ready"
+
+export type Deployment = {
 	deploymentId: string;
-	commitSha: string;
-	date: string;
-	message: string;
 	checkRunId: number;
-	installationId: number
+	status: RoltStatus
+	gitMetadata: {
+		commitSha: string;
+		commitMessage: string;
+		commitRef: string
+		commitAuthorName: string
+	}
+	domains: {
+		project: string;
+		deploymentSha: string;
+		commitSha: string
+	}
+	environment: Environment
+	isCurrent: boolean
+	projectId: string;
+	createdAt: string
+	updatedAt: string
 };
 
-export type BuildLog = {
-	deploymentId: string;
-	timestamp: number;
-	timezone: string;
-	log: string
-};
-
-export type App = {
+export type DeploymentRequest = {
 	owner: string
-	installationId: Number
+	repo: string
+	ref?: string
 }
+
+export type DeploymentExtended = Deployment & Pick<Project, "installation"> & DeploymentRequest
 
 export type EventType = "push" | "installation"
 
-export type GithubDeployment = CreateDeployment & Pick<CreateDeploymentResponse, "commitSha" | "deploymentId">
+export type GithubDeployment = DeploymentRequest & Pick<Deployment, "deploymentId" | "gitMetadata">
 
 export type GithubCheckStatus = "completed" | "in_progress" | "queued"
 
 export type GithubCheckConclusion = "action_required" | "cancelled" | "failure" | "neutral" | "success" | "skipped" | "stale" | "timed_out"
 
-export type GithubCheck = CreateDeployment & {
+export type GithubCheck = DeploymentRequest & {
 	status: GithubCheckStatus
 	conclusion?: GithubCheckConclusion
 	title: string
 	summary: string
-} & Pick<CreateDeploymentResponse, "commitSha" | "checkRunId">
+} & Pick<Deployment, 'gitMetadata' | "checkRunId">

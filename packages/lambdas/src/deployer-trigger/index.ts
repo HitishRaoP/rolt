@@ -5,7 +5,7 @@ import { LAMBDA_CONSTANTS } from './constants';
 import { deployment } from './deployment';
 import { ingress } from './ingress';
 import { service } from './service';
-import { CreateDeploymentResponse } from '@rolt/types/Deployment';
+import { DeploymentExtended } from '@rolt/types/Deployment';
 
 const client = new SecretsManagerClient({
     region: LAMBDA_CONSTANTS.AWS.REGION,
@@ -62,7 +62,7 @@ async function getMinikubeKubeConfig(): Promise<k8s.KubeConfig> {
 async function processMessageAsync(message: SQSRecord) {
     try {
         console.log("Received SQS message:", message);
-        const deploymentData = JSON.parse(message.body) as CreateDeploymentResponse;
+        const deploymentData = JSON.parse(message.body) as DeploymentExtended;
 
         /**
          * K8s Configs

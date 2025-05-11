@@ -4,7 +4,7 @@ import { GithubCheckSchema, GithubDeploymentSchema, GetRepoForImportSchema } fro
 import { Deployment } from "@octokit/webhooks-types";
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
 import { ZodError } from "zod";
-import { FrameWorkDetector } from "../services/framework-detector.service.js";
+import { deploymentDB } from "../db/client.js";
 
 /**
  *
@@ -19,7 +19,7 @@ export const CreateGithubDeployment = async (req: Request, res: Response) => {
             owner,
             repo,
             ref,
-            commitSha,
+            gitMetadata,
             deploymentId } = GithubDeploymentSchema.parse(req.body)
 
         /**
@@ -49,8 +49,8 @@ export const CreateGithubDeployment = async (req: Request, res: Response) => {
             deployment_id: (data as Deployment).id,
             state: "success",
             description: "Deployment completed successfully",
-            environment_url: getDomains({ owner, repo, commitSha, deploymentId }).web,
-            log_url: getDomains({ owner, repo, commitSha, deploymentId }).logs
+            environment_url: getDomains({ owner, repo, commitSha: gitMetadata.commitSha, deploymentId }).web,
+            log_url: getDomains({ owner, repo, commitSha: gitMetadata.commitSha, deploymentId }).logs
         });
 
         return sendResponse({
@@ -82,7 +82,7 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
             installationId,
             owner,
             repo,
-            commitSha,
+            gitMetadata,
             status,
             conclusion,
             checkRunId,
@@ -102,7 +102,7 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
             repo,
             check_run_id: checkRunId,
             name: "Rolt",
-            head_sha: commitSha,
+            head_sha: gitMetadata.commitSha,
             status,
             conclusion,
             output: {
@@ -110,6 +110,39 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
                 summary,
             },
         });
+
+        if (status == "in_progress") {
+            await deploymentDB.deployment.update({
+                where: {
+                    checkRunId
+                },
+                data: {
+                    status: "Pending"
+                }
+            })
+        }
+
+        if (conclusion == 'success') {
+            await deploymentDB.deployment.update({
+                where: {
+                    checkRunId
+                },
+                data: {
+                    status: 'Ready'
+                }
+            })
+        }
+
+        if (conclusion === 'failure') {
+            await deploymentDB.deployment.update({
+                where: {
+                    checkRunId
+                },
+                data: {
+                    status: "Error"
+                }
+            })
+        }
 
         return sendResponse({
             res,
@@ -190,8 +223,6 @@ export const GetRepoForImport = async (req: Request, res: Response) => {
         /**
          * Getting the Framework Details
          */
-        const frameWorkDetector = new FrameWorkDetector(owner, repo, installationId);
-        const framework = await frameWorkDetector.detect();
 
         return sendResponse({
             res,
@@ -199,7 +230,6 @@ export const GetRepoForImport = async (req: Request, res: Response) => {
             statusCode: 200,
             data: {
                 repo: response.data,
-                importDetails: framework.data
             }
         });
     } catch (error) {

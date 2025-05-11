@@ -1,20 +1,21 @@
 import { GetQueueUrlCommand, SendMessageCommand, SQSClient, SQSServiceException } from "@aws-sdk/client-sqs";
 import { DEPLOYMENT_SERVER_CONSTANTS } from "../constants/deployment-server-constants.js";
-import { CreateDeployment, CreateDeploymentResponse } from "@rolt/types/Deployment";
+import { Deployment, DeploymentExtended, DeploymentRequest } from "@rolt/types/Deployment";
 import { customAlphabet } from "nanoid";
 import { ZodError } from "zod";
 import { Octokit as OctokitRest } from "@octokit/rest"
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
-import { InstallationModel } from "../models/installation.model.js";
 import { deploymentDB } from "../db/client.js";
+import { getDomains } from "../utils/get-domains.js"
 
 export class DeploymentService {
     private sqsClient: SQSClient;
-    private deploymentDetails: CreateDeployment;
+    private request: DeploymentRequest
     private octokit: OctokitRest;
+    private deploymentId: string;
 
-    constructor(deploymentDetails: CreateDeployment) {
-        this.deploymentDetails = deploymentDetails;
+    constructor(request: DeploymentRequest) {
+        this.request = request;
         this.sqsClient = new SQSClient({
             region: DEPLOYMENT_SERVER_CONSTANTS.AWS.REGION,
             credentials: {
@@ -24,21 +25,38 @@ export class DeploymentService {
             endpoint: DEPLOYMENT_SERVER_CONSTANTS.SQS.ENDPOINT,
         });
         this.octokit = new OctokitRest();
+        this.deploymentId = this.generateDeploymentId()
     }
 
-    private async getInstallationId() {
+    private async getInstallation() {
         try {
             const appDoc = await deploymentDB.installation.findUnique({
                 where: {
-                    owner: this.deploymentDetails.owner,
+                    owner: this.request.owner,
                 }
             });
             if (!appDoc) {
-                throw new Error(`No app installation found for owner: ${this.deploymentDetails.owner}`);
+                throw new Error(`No app installation found for owner: ${this.request.owner}`);
             }
-            return appDoc.installationId;
+            return appDoc;
         } catch (error) {
-            throw new Error(`Failed to get installation ID: ${error}`);
+            throw new Error(`Failed to get installation: ${error}`);
+        }
+    }
+
+    private async getProjectId() {
+        try {
+            const appDoc = await deploymentDB.project.findUnique({
+                where: {
+                    githubRepository: `${this.request.owner}/${this.request.repo}`,
+                },
+            });
+            if (!appDoc) {
+                throw new Error(`No Project found for owner: ${this.request.owner}`);
+            }
+            return appDoc?.projectId;
+        } catch (error) {
+            throw new Error(`Failed to get Project  ID: ${error}`);
         }
     }
 
@@ -46,24 +64,30 @@ export class DeploymentService {
         const commits = await this.octokit
             .rest
             .repos.
-            listCommits(this.deploymentDetails);
+            listCommits({ ...this.request });
         const latestCommit = commits?.data[0];
         return {
-            date: latestCommit?.commit.committer?.date as string,
-            message: latestCommit?.commit.message as string,
-            commitSha: latestCommit?.sha as string
+            commitSha: latestCommit?.sha as string,
+            commitMessage: latestCommit?.commit.message as string,
+            commitRef: this.request.ref as string,
+            commitAuthorName: latestCommit?.author?.login as string
         }
+    }
+
+    private generateDeploymentId(): string {
+        const safeId = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10)();
+        return `depl${safeId}`;
     }
 
     private async createGithubCheck() {
         const octokit = await getOctokitFromInstallationId(
-            await this.getInstallationId());
+            (await this.getInstallation()).installationId);
         /**
          * Create the Github Check
          */
         return await octokit.rest.checks.create({
-            owner: this.deploymentDetails.owner,
-            repo: this.deploymentDetails.repo,
+            owner: this.request.owner,
+            repo: this.request.repo,
             name: "Rolt",
             head_sha: (await this.commitDetails()).commitSha,
             status: "queued",
@@ -72,6 +96,26 @@ export class DeploymentService {
                 summary: "Deployment has been Queued.",
             },
         });
+    }
+
+    private async createDeployment(response: Deployment) {
+        try {
+            await deploymentDB.deployment.create({
+                data: {
+                    ...response,
+                    gitMetadata: {
+                        create: {
+                            ...response.gitMetadata
+                        }
+                    },
+                    domains: {
+                        create: response.domains
+                    }
+                }
+            })
+        } catch (error) {
+            throw new Error((error as Error).message)
+        }
     }
 
     async deploy() {
@@ -85,21 +129,45 @@ export class DeploymentService {
             const { QueueUrl } = await this.sqsClient.send(getQueueURLCommand);
 
             /**
-             * Send the message to the Queue URL obtained along with the Deployment ID (Following K8s Guidelines)
-            */
-            const id = () => {
-                const safeId = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 10)();
-                return `d${safeId}`;
+             * Building the Deployment Object
+             */
+            const deployment: Deployment = {
+                deploymentId: this.deploymentId,
+                checkRunId: (await this.createGithubCheck()).data.id,
+                status: "Queued",
+                gitMetadata: {
+                    ...(await this.commitDetails()),
+                    commitRef: "main"
+                },
+                domains: {
+                    ...(getDomains({
+                        owner: this.request.owner,
+                        repo: this.request.repo,
+                        deploymentSha: this.deploymentId,
+                        commitSha: (await this.commitDetails()).commitSha
+                    }))
+                },
+                environment: "Production",
+                isCurrent: true,
+                projectId: await this.getProjectId(),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             };
 
-            const response: CreateDeploymentResponse = {
-                ...this.deploymentDetails,
-                ref: this.deploymentDetails.ref ?? "main",
-                deploymentId: id(),
-                ...(await this.commitDetails()),
-                checkRunId: (await this.createGithubCheck()).data.id,
-                installationId: await this.getInstallationId()
+            const response: DeploymentExtended = {
+                ...deployment,
+                ...this.request,
+                ref: "main",
+                installation: await this.getInstallation()
             };
+            /**
+             * Create the Deployment
+            */
+            await this.createDeployment(deployment);
+
+            /**
+             * Send the message to the Queue URL obtained along with the Deployment ID (Following K8s Guidelines)
+            */
             const sendMessageCommand = new SendMessageCommand({
                 MessageBody: JSON.stringify(response),
                 QueueUrl,
