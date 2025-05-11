@@ -27,10 +27,17 @@ export const getLogsForDeployment = async (req: Request, res: Response) => {
     }
 }
 
-export const getLiveLogsForDeployment = (req: Request, res: Response) => {
+export const getLiveLogsForDeployment = async (req: Request, res: Response) => {
     const log: IncomingLog = req.body;
-    console.log(log);
     const { deploymentId } = log;
+
+    /**
+     * Insert Log into DB
+     */
+    await logDB.log.create({
+        data: log
+    });
+
     const io: Server = req.app.get("io");
     if (!io) {
         sendResponse({

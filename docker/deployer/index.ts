@@ -8,7 +8,7 @@ import path from 'path';
 const LOG_SERVER_SMEE = 'https://smee.io/R7CnnfFPlA0XiBv'
 const ENTRYPOINT_PATH = 'entrypoint.sh'
 
-async function logToServer(logMessage: string, type: "error" | "info" = "info") {
+async function logToServer(logMessage: string, type: "Error" | "Info") {
     try {
         const logPayload = {
             log: logMessage,
@@ -30,20 +30,20 @@ function runShellScript(scriptPath: string, env: NodeJS.ProcessEnv): Promise<voi
 
         process.stdout?.on('data', (data) => {
             output += data;
-            logToServer(data, "info");
+            logToServer(data, "Info");
         });
         process.stderr?.on('data', (data) => {
             output += data;
-            logToServer(data, "error");
+            logToServer(data, "Error");
         });
 
         process.on('close', (code) => {
             if (code === 0) {
                 resolve();
-                logToServer('Shell script completed successfully.');
+                logToServer('Shell script completed successfully.', "Info");
             } else {
                 reject(`Shell script failed with exit code ${code}`);
-                logToServer(`Shell script failed with exit code ${code}`);
+                logToServer(`Shell script failed with exit code ${code}`, "Error");
             }
         });
     });

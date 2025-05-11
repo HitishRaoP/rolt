@@ -75,4 +75,5 @@ LOGGING_URL='http://localhost:8085/logs/live'
 npx concurrently \
   "smee -u \"$SMEE_URL\" -t \"$WEBHOOK_URL\"" \
   "smee -u \"$LOGGING_SMEE\" -t \"$LOGGING_URL\"" \
-  "kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2"
+  "kubectl port-forward deployment/traefik 8000:8000 -n traefik-v2" \
+  "bun run dev"

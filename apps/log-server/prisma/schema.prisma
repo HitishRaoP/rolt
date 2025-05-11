@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Log {
-  id           String   @id @default(uuid()) @map("_id") @db.ObjectId
+  id           String   @id @default(uuid()) @map("_id")
   log          String
   deploymentId String
   timestamp    DateTime
