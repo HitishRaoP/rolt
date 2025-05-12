@@ -4,6 +4,9 @@
   "main": "dist/index.js",
   "license": "MIT",
   "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
   "scripts": {
     "build": "rm -rf dist && tsc",
     "lint": "eslint .",

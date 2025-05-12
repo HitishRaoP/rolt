@@ -1,9 +1,9 @@
-import { sendResponse } from "@rolt/utils";
+import { InitSSEHeaders, sendResponse, SSE } from "@rolt/utils";
 import { Request, Response } from "express";
 import { logDB } from "../db/log-db";
 import { IncomingLog } from "@rolt/types/Log";
 
-const clients: { deploymentId: string; res: Response }[] = [];
+export const clients: { deploymentId: string; res: Response }[] = [];
 
 export const getLogsFromKubernetes = async (req: Request, res: Response) => {
     const log: IncomingLog = req.body;
@@ -19,7 +19,7 @@ export const getLogsFromKubernetes = async (req: Request, res: Response) => {
      */
     clients.forEach((client) => {
         if (client.deploymentId === deploymentId) {
-            client.res.write(`data: ${JSON.stringify(log)}\n\n`)
+            SSE(client.res, log)
         }
     });
 
@@ -33,10 +33,10 @@ export const getLogsFromKubernetes = async (req: Request, res: Response) => {
 export const getLiveLogsForDeployment = async (req: Request, res: Response) => {
     const { deploymentId } = req.query as { deploymentId: string };
 
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders();
+    /**
+     *  Necessary Headers
+     */
+    InitSSEHeaders(res);
 
     /**
      * Send Previous Logs
@@ -47,7 +47,7 @@ export const getLiveLogsForDeployment = async (req: Request, res: Response) => {
     });
 
     logs.forEach(log => {
-        res.write(`data: ${JSON.stringify(log)}\n\n`)
+        SSE(res, log)
     });
 
     /**

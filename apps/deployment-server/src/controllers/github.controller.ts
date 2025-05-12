@@ -4,7 +4,7 @@ import { GithubCheckSchema, GithubDeploymentSchema, GetRepoForImportSchema } fro
 import { Deployment } from "@octokit/webhooks-types";
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
 import { ZodError } from "zod";
-import { deploymentDB } from "../db/client.js";
+import { updateStatus } from "../utils/update-status.js";
 
 /**
  *
@@ -21,6 +21,7 @@ export const CreateGithubDeployment = async (req: Request, res: Response) => {
             ref,
             gitMetadata,
             deploymentId } = GithubDeploymentSchema.parse(req.body)
+
 
         /**
          * Get the Octokit Instance
@@ -79,6 +80,7 @@ export const CreateGithubDeployment = async (req: Request, res: Response) => {
 export const UpdateGithubCheck = async (req: Request, res: Response) => {
     try {
         const {
+            deploymentId,
             installationId,
             owner,
             repo,
@@ -111,37 +113,15 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
             },
         });
 
-        if (status == "in_progress") {
-            await deploymentDB.deployment.update({
-                where: {
-                    checkRunId
-                },
-                data: {
-                    status: "Pending"
-                }
-            })
-        }
-
-        if (conclusion == 'success') {
-            await deploymentDB.deployment.update({
-                where: {
-                    checkRunId
-                },
-                data: {
-                    status: 'Ready'
-                }
-            })
-        }
-
-        if (conclusion === 'failure') {
-            await deploymentDB.deployment.update({
-                where: {
-                    checkRunId
-                },
-                data: {
-                    status: "Error"
-                }
-            })
+        /**
+         * Updating the statuses
+         */
+        if (status === "in_progress") {
+            updateStatus({ deploymentId, status: "Pending" });
+        } else if (conclusion === "success") {
+            updateStatus({ deploymentId, status: "Ready" });
+        } else if (conclusion === "failure") {
+            updateStatus({ deploymentId, status: "Error" });
         }
 
         return sendResponse({

@@ -3,6 +3,7 @@ import z, { ZodType } from "zod";
 import { CreateDeploymentSchema } from "./create-deployment-schema";
 
 export const GithubCheckSchema = CreateDeploymentSchema.extend({
+    deploymentId: z.string(),
     installationId: z.number().min(2),
     gitMetadata: z.object({
         commitSha: z.string().min(1),

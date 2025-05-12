@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { sendResponse } from '@rolt/utils';
+import { sendResponse, SSE, InitSSEHeaders } from '@rolt/utils';
 import { CreateDeploymentSchema } from '@rolt/schemas';
 import { DeploymentService } from '../services/deployment.service.js';
 import { deploymentDB } from '../db/client.js';
 import { z, ZodError } from 'zod';
+import { interval } from '../utils/interval.js';
 
 /**
  * @description Handles the deployment request by validating input,
@@ -116,6 +117,83 @@ export const GetDeploymentById = async (req: Request, res: Response) => {
 				}))
 			});
 		}
+		return sendResponse({
+			res,
+			message: "Internal Server Error",
+			statusCode: 500,
+			data: error
+		})
+	}
+}
+
+type Client = {
+	deploymentId: string
+	res: Response
+	timer?: NodeJS.Timeout
+}
+
+export const clients: Client[] = [];
+
+export const GetDeploymentStatus = async (req: Request, res: Response) => {
+	try {
+		const { deploymentId } = req.params as { deploymentId: string };
+
+		/**
+		 * Necessary Headers
+		 */
+		InitSSEHeaders(res);
+
+		/**
+		 * Sending Previous Status (If Missed)
+		 */
+		const deployment = await deploymentDB.deployment.findUnique({
+			where: {
+				deploymentId
+			},
+			select: {
+				status: true,
+				createdAt: true,
+				updatedAt: true
+			},
+		});
+
+		SSE(res, { type: "STATUS", status: deployment?.status });
+
+		/**
+		 * Timer Logic
+		 */
+		if (deployment?.status === "Error" || deployment?.status === "Ready") {
+			const time = interval(deployment.createdAt, deployment.updatedAt);
+			SSE(res, { type: 'TIMER', time });
+		}
+
+		if (deployment?.status === 'Pending' || deployment?.status === 'Queued') {
+			const client: Client = { deploymentId, res }
+
+			client.timer = setInterval(() => {
+				const elapsed = interval(deployment.createdAt, new Date());
+				SSE(res, { type: "TIMER", elapsed });
+			}, 1000);
+
+			clients.push(client);
+		}
+
+
+		/**
+		* Register for live updates
+		*/
+		const client = { deploymentId, res };
+		clients.push(client);
+
+		/**
+		* Clean Up
+			*/
+		req.on("close", () => {
+			const index = clients.findIndex(c => c.res === res);
+			if (index !== -1) clients.splice(index, 1);
+			res.end();
+		});
+	} catch (error) {
 		return sendResponse({
 			res,
 			message: "Internal Server Error",

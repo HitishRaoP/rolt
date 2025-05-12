@@ -36,14 +36,30 @@ export const GetProjectsForUser = async (req: Request, res: Response) => {
         const response = await deploymentDB.project.findMany({
             where: {
                 userId
+            },
+            include: {
+                deployments: {
+                    orderBy: {
+                        createdAt: "desc"
+                    },
+                    take: 1
+                }
             }
         });
+
+        /**
+         * Appending the latestDeployment to each Project
+         */
+        const projectsWithLatestDeployment = response.map(project => ({
+            ...project,
+            latestDeployment: project.deployments[0],
+        }));
 
         return sendResponse({
             res,
             message: `Projects Successfully Fetched for user: ${userId}`,
             statusCode: 200,
-            data: response
+            data: projectsWithLatestDeployment
         });
     } catch (error) {
         if (error instanceof ZodError) {

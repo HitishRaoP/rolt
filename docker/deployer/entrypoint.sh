@@ -42,6 +42,7 @@ update_check() {
     -H "Content-Type: application/json" \
     -d '{
       "installationId": '"$INSTALLATION_ID"',
+      "deploymentId": "'"$DEPLOYMENT_ID"'",
       "owner": "'"$OWNER"'",
       "repo": "'"$REPO"'",
       "gitMetadata": {

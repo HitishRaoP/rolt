@@ -47,4 +47,4 @@ export type GithubCheck = DeploymentRequest & {
 	conclusion?: GithubCheckConclusion
 	title: string
 	summary: string
-} & Pick<Deployment, 'gitMetadata' | "checkRunId">
+} & Pick<Deployment, 'gitMetadata' | "checkRunId" | "deploymentId">
