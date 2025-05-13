@@ -4,13 +4,15 @@ variable "aws_region" {
 }
 
 variable "localstack_endpoint" {
-  type    = string
-  default = "http://localhost:4566"
+  type = string
+  //  default = "http://localhost:4566"
+  default = "https://localstack-pro.onrender.com"
 }
 
 variable "aws_endpoint" {
   type    = string
-  default = "http://host.docker.internal:4566"
+  //default = "http://host.docker.internal:4566"
+  default = "https://localstack-pro.onrender.com"
 }
 
 variable "aws_secret_key" {
@@ -56,6 +58,6 @@ variable "HOST_IP" {
 }
 
 variable "HOST" {
-  type = string
+  type    = string
   default = "localhost"
 }
