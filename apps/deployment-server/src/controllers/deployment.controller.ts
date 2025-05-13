@@ -49,12 +49,17 @@ export const GetDeploymentsForProject = async (req: Request, res: Response) => {
 	try {
 		const { projectId } = getDeploymentsForUserSchema.parse(req.params);
 
-		const response = await deploymentDB.project.findMany({
+		const response = await deploymentDB.project.findUnique({
 			where: {
 				projectId
 			},
 			include: {
-				deployments: true
+				deployments: {
+					include: {
+						gitMetadata: true,
+						domains: true
+					},
+				}
 			}
 		})
 		return sendResponse({
@@ -97,6 +102,10 @@ export const GetDeploymentById = async (req: Request, res: Response) => {
 		const response = await deploymentDB.deployment.findUnique({
 			where: {
 				deploymentId
+			},
+			include: {
+				gitMetadata: true,
+				domains: true
 			}
 		});
 		return sendResponse({

@@ -50,6 +50,7 @@ model Project {
   projectId            String                 @id @default(uuid()) @map("_id")
   userId               String
   githubRepository     String                 @unique
+  /*[TODO]: Add Unique Constraint*/
   name                 String
   framework            FrameworkEnum
   installCommand       String?                @default("npm run install") @map("install_command")

@@ -32,13 +32,16 @@ export const GetProjectsForUser = async (req: Request, res: Response) => {
     })
     try {
         const { userId } = getProjectsForUserSchema.parse(req.params);
-
         const response = await deploymentDB.project.findMany({
             where: {
                 userId
             },
             include: {
                 deployments: {
+                    include: {
+                        gitMetadata: true,
+                        domains: true
+                    },
                     orderBy: {
                         createdAt: "desc"
                     },
@@ -95,14 +98,35 @@ export const GetProjectById = async (req: Request, res: Response) => {
         const response = await deploymentDB.project.findUnique({
             where: {
                 projectId
+            },
+            include: {
+                deployments: {
+                    include: {
+                        gitMetadata: true,
+                        domains: true
+                    },
+                    orderBy: {
+                        createdAt: "desc"
+                    },
+                }
             }
         });
+
+        /**
+         * Appending the latestDeployment to each Project
+         */
+        const projectsWithLatestDeployment = {
+            ...response,
+            latestDeployment: response?.deployments.at(0),
+        }
+
         return sendResponse({
             res,
             message: `Project Successfully Fetched for ${projectId}`,
             statusCode: 200,
-            data: response
+            data: projectsWithLatestDeployment
         });
+
     } catch (error) {
         if (error instanceof ZodError) {
             return sendResponse({
