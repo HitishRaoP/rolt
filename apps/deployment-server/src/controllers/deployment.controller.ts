@@ -108,6 +108,7 @@ export const GetDeploymentById = async (req: Request, res: Response) => {
 				domains: true
 			}
 		});
+
 		return sendResponse({
 			res,
 			message: `Deployment Successfully Fetched for ${deploymentId}`,

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { CreateGithubDeployment, GetRepoForImport, GetReposFromInstallationId, UpdateGithubCheck } from '../controllers/github.controller.js';
+import { CreateGithubDeployment, GetRepoForImport, GetReposForOwner, UpdateGithubCheck } from '../controllers/github.controller.js';
 
 const GithubRouter = Router();
 
@@ -7,7 +7,7 @@ GithubRouter.post('/deployment', CreateGithubDeployment);
 
 GithubRouter.post("/check", UpdateGithubCheck);
 
-GithubRouter.get("/repos", GetReposFromInstallationId);
+GithubRouter.get("/repos/:owner", GetReposForOwner);
 
 GithubRouter.get("/repo", GetRepoForImport)
 

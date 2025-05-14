@@ -5,6 +5,8 @@ import { Deployment } from "@octokit/webhooks-types";
 import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
 import { ZodError } from "zod";
 import { updateStatus } from "../utils/update-status.js";
+import { deploymentDB } from "../db/client.js";
+import { log } from "console";
 
 /**
  *
@@ -146,19 +148,37 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
  * @param res
  * @returns
  */
-export const GetReposFromInstallationId = async (req: Request, res: Response) => {
+export const GetReposForOwner = async (req: Request, res: Response) => {
     try {
-        const { installationId } = req.query as unknown as { installationId: number };
+        const { owner } = req.params as unknown as { owner: string };
+
+        /**
+         * Get the Installation
+         */
+        const installation = await deploymentDB.installation.findUnique({
+            where: {
+                owner
+            }
+        });
 
         /**
          * Create an instance For the Installation Octokit Wrapper
          */
-        const octokit = await getOctokitFromInstallationId(installationId);
+        const octokit = await getOctokitFromInstallationId(Number(installation?.installationId));
 
         /**
          * Calling the API
          */
         const response = await octokit.rest.apps.listReposAccessibleToInstallation();
+
+        if (!response.data.repositories) {
+            return sendResponse({
+                res,
+                message: "No Repos Found",
+                statusCode: 404,
+                data: response.data.repositories
+            });
+        }
 
         return sendResponse({
             res,
@@ -166,6 +186,7 @@ export const GetReposFromInstallationId = async (req: Request, res: Response) =>
             statusCode: 200,
             data: response.data.repositories
         });
+
     } catch (error) {
         return sendResponse({
             res,
@@ -191,14 +212,25 @@ export const GetRepoForImport = async (req: Request, res: Response) => {
         /**
          * Get the Repository details
          */
-        const { installationId, repo, owner } = GetRepoForImportSchema.parse(req.query);
+        const { repo, owner } = GetRepoForImportSchema.parse(req.query);
+        console.log(req.query);
 
-        const octokit = await getOctokitFromInstallationId(installationId);
+        /**
+        * Get the Installation
+        */
+        const installation = await deploymentDB.installation.findUnique({
+            where: {
+                owner
+            }
+        });
+
+        const octokit = await getOctokitFromInstallationId(Number(installation?.installationId));
 
         const response = await octokit.rest.repos.get({
             owner,
             repo
         });
+        console.log(response);
 
         /**
          * Getting the Framework Details
@@ -218,7 +250,7 @@ export const GetRepoForImport = async (req: Request, res: Response) => {
                 res,
                 message: "Invalid request query parameters",
                 statusCode: 400,
-                data: error.message
+                data: JSON.stringify(error.message)
             });
         }
         return sendResponse({

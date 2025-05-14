@@ -10,9 +10,4 @@ export const GetRepoForImportSchema = z.object({
     required_error: "Repository name is required",
     invalid_type_error: "Repository name must be a string",
   }).min(1, { message: "Repository name cannot be empty" }),
-
-  installationId: z.coerce.number({
-    required_error: "Installation ID is required",
-    invalid_type_error: "Installation ID must be a number",
-  }).min(1, { message: "Installation ID cannot be empty" }),
 });

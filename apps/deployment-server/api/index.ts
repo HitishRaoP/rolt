@@ -1,3 +1,3 @@
-import app from '../src/deployment-server';
+import app from '../src/deployment-server.js';
 
 export default app;

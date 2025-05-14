@@ -3,7 +3,7 @@ import { DeploymentExtended } from '@rolt/types/Deployment'
 import { LAMBDA_CONSTANTS } from "./constants";
 
 export const deployment = (deploymentResponse: DeploymentExtended) => {
-    const { deploymentId, owner, repo, ref, installation, gitMetadata, checkRunId } = deploymentResponse;
+    const { deploymentId, owner, repo, ref, installation, gitMetadata, checkRunId, } = deploymentResponse;
 
     const deployment: k8s.V1Deployment = {
         apiVersion: "apps/v1",

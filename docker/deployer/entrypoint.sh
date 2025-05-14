@@ -8,17 +8,17 @@ cd /usr/src/app/"$OWNER-$REPO"
 # Force application to run on port 3000
 PORT=3000
 
-echo "INSTALLATION_ID=$INSTALLATION_ID"
-echo "CHECK_RUN_ID=$CHECK_RUN_ID"
-echo "OWNER=$OWNER"
-echo "REPO=$REPO"
-echo "COMMIT_SHA=$COMMIT_SHA"
-echo "COMMIT_REF=$COMMIT_REF"
-echo "COMMIT_AUTHOR_NAME=$COMMIT_AUTHOR_NAME"
-echo "COMMIT_MESSAGE=$COMMIT_MESSAGE"
-echo "REF=$REF"
-echo "DEPLOYMENT_ID=$DEPLOYMENT_ID"
-echo "HOST_IP"="$HOST_IP"
+# echo "INSTALLATION_ID=$INSTALLATION_ID"
+# echo "CHECK_RUN_ID=$CHECK_RUN_ID"
+# echo "OWNER=$OWNER"
+# echo "REPO=$REPO"
+# echo "COMMIT_SHA=$COMMIT_SHA"
+# echo "COMMIT_REF=$COMMIT_REF"
+# echo "COMMIT_AUTHOR_NAME=$COMMIT_AUTHOR_NAME"
+# echo "COMMIT_MESSAGE=$COMMIT_MESSAGE"
+# echo "REF=$REF"
+# echo "DEPLOYMENT_ID=$DEPLOYMENT_ID"
+# echo "HOST_IP"="$HOST_IP"
 
 # API endpoints for check updates and deployment
 CHECKS_ENDPOINT="http://$HOST_IP:8081/github/check"
