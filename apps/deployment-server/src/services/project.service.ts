@@ -14,17 +14,8 @@ export class ProjectService extends DeploymentService {
 
     private async createProject() {
         try {
-            const response = await deploymentDB.project.upsert({
-                where: {
-                    githubRepository: this.projectRequest.githubRepository
-                },
-                update: {
-                    ...this.projectRequest,
-                    environmentVariables: {
-                        create: this.projectRequest.environmentVariables
-                    }
-                },
-                create: {
+            const response = await deploymentDB.project.create({
+                data: {
                     ...this.projectRequest,
                     environmentVariables: {
                         create: this.projectRequest.environmentVariables

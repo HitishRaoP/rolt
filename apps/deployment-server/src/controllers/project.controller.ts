@@ -9,6 +9,7 @@ export const createProject = async (req: Request, res: Response) => {
     try {
         const projectService = new ProjectService(
             CreateProjectSchema.parse(req.body))
+        console.log(projectService);
         const response = await projectService.createProjectAndDeploy();
         return sendResponse({
             res,
