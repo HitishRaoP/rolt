@@ -131,7 +131,7 @@ if [ -f "package.json" ]; then
     echo "Running 'start' script..."
     update_check "completed" "success" "Build Success" "Build step Completed."
     create_deployment
-    exec $PACKAGE_MANAGER start --port 3000 --host 0.0.0.0
+    exec $PACKAGE_MANAGER start --port 3000 -H 0.0.0.0
   elif grep -q "\"preview\":" package.json; then
     echo "Running 'preview' script..."
     update_check "completed" "success" "Build Success" "Build step Completed"

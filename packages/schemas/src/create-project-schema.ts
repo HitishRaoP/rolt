@@ -1,5 +1,5 @@
 import z, { ZodType } from "zod";
-import { FrameworkEnum } from "../../../apps/deployment-server/generated/prisma";
+import { FrameworkEnum } from "../../../apps/deployment-server/generated/prisma/index.js";
 import { ProjectRequest } from "@rolt/types/Project";
 
 const EnvironmentVariableSchema = z.object({

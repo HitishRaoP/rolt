@@ -1,5 +1,5 @@
 import z, { ZodType } from "zod";
-import { CreateDeploymentSchema } from "./create-deployment-schema";
+import { CreateDeploymentSchema } from "./create-deployment-schema.js";
 import { GithubDeployment } from "@rolt/types/Deployment";
 
 export const GithubDeploymentSchema = CreateDeploymentSchema.extend({

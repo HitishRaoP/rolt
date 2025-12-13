@@ -46,7 +46,7 @@ export class DeploymentService {
 
     private async getProjectId() {
         try {
-            const appDoc = await deploymentDB.project.findUnique({
+            const appDoc = await deploymentDB.project.findFirst({
                 where: {
                     githubRepository: `${this.request.owner}/${this.request.repo}`,
                 },

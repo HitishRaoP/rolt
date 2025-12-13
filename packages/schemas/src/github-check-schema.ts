@@ -1,6 +1,6 @@
 import { GithubCheck, GithubCheckConclusion, GithubCheckStatus } from "@rolt/types/Deployment";
 import z, { ZodType } from "zod";
-import { CreateDeploymentSchema } from "./create-deployment-schema";
+import { CreateDeploymentSchema } from "./create-deployment-schema.js";
 
 export const GithubCheckSchema = CreateDeploymentSchema.extend({
     deploymentId: z.string(),

@@ -1,12 +1,15 @@
-import { getDomains, sendResponse } from "@rolt/utils";
-import { Request, Response } from "express";
-import { GithubCheckSchema, GithubDeploymentSchema, GetRepoForImportSchema } from "@rolt/schemas";
-import { Deployment } from "@octokit/webhooks-types";
-import { getOctokitFromInstallationId } from "../utils/get-octokit-from-InstallationId.js";
-import { ZodError } from "zod";
-import { updateStatus } from "../utils/update-status.js";
-import { deploymentDB } from "../db/client.js";
-import { log } from "console";
+import { getDomains, sendResponse } from '@rolt/utils';
+import { Request, Response } from 'express';
+import {
+	GithubCheckSchema,
+	GithubDeploymentSchema,
+	GetRepoForImportSchema,
+} from '@rolt/schemas';
+import { Deployment } from '@octokit/webhooks-types';
+import { getOctokitFromInstallationId } from '../utils/get-octokit-from-InstallationId.js';
+import { ZodError } from 'zod';
+import { updateStatus } from '../utils/update-status.js';
+import { deploymentDB } from '../db/client.js';
 
 /**
  *
@@ -15,63 +18,63 @@ import { log } from "console";
  * @returns
  */
 export const CreateGithubDeployment = async (req: Request, res: Response) => {
-    try {
-        const {
-            installationId,
-            owner,
-            repo,
-            ref,
-            gitMetadata,
-            deploymentId } = GithubDeploymentSchema.parse(req.body)
+	try {
+		const { installationId, owner, repo, ref, gitMetadata, deploymentId } =
+			GithubDeploymentSchema.parse(req.body);
 
+		/**
+		 * Get the Octokit Instance
+		 */
+		const octokit = await getOctokitFromInstallationId(installationId);
 
-        /**
-         * Get the Octokit Instance
-         */
-        const octokit = await getOctokitFromInstallationId(installationId);
+		/**
+		 * Create The Deployment First
+		 */
+		const { data } = await octokit.rest.repos.createDeployment({
+			owner,
+			repo,
+			ref,
+			auto_merge: false,
+		});
 
-        /**
-         * Create The Deployment First
-         */
-        const { data } = await octokit
-            .rest
-            .repos
-            .createDeployment({
-                owner,
-                repo,
-                ref,
-                auto_merge: false
-            });
+		/**
+		 * Create the Deployment Status
+		 */
+		const response = await octokit.rest.repos.createDeploymentStatus({
+			owner,
+			repo,
+			deployment_id: (data as Deployment).id,
+			state: 'success',
+			description: 'Deployment completed successfully',
+			environment_url: getDomains({
+				owner,
+				repo,
+				commitSha: gitMetadata.commitSha,
+				deploymentId,
+			}).web,
+			log_url: getDomains({
+				owner,
+				repo,
+				commitSha: gitMetadata.commitSha,
+				deploymentId,
+			}).logs,
+		});
 
-        /**
-         * Create the Deployment Status
-         */
-        const response = await octokit.rest.repos.createDeploymentStatus({
-            owner,
-            repo,
-            deployment_id: (data as Deployment).id,
-            state: "success",
-            description: "Deployment completed successfully",
-            environment_url: getDomains({ owner, repo, commitSha: gitMetadata.commitSha, deploymentId }).web,
-            log_url: getDomains({ owner, repo, commitSha: gitMetadata.commitSha, deploymentId }).logs
-        });
-
-        return sendResponse({
-            res,
-            message: "Deployment Created Successfully",
-            statusCode: 201,
-            data: response
-        });
-
-    } catch (error) {
-        return sendResponse({
-            res,
-            message: "Internal Server Error",
-            statusCode: 500,
-            data: error
-        })
-    }
-}
+		return sendResponse({
+			res,
+			message: 'Deployment Created Successfully',
+			statusCode: 201,
+			data: response,
+		});
+	} catch (error) {
+		return sendResponse({
+			res,
+			message: 'Internal Server Error',
+			statusCode: 500,
+			data: error,
+		});
+	}
+};
 
 /**
  *
@@ -80,67 +83,67 @@ export const CreateGithubDeployment = async (req: Request, res: Response) => {
  * @returns
  */
 export const UpdateGithubCheck = async (req: Request, res: Response) => {
-    try {
-        const {
-            deploymentId,
-            installationId,
-            owner,
-            repo,
-            gitMetadata,
-            status,
-            conclusion,
-            checkRunId,
-            title,
-            summary } = GithubCheckSchema.parse(req.body)
+	try {
+		const {
+			deploymentId,
+			installationId,
+			owner,
+			repo,
+			gitMetadata,
+			status,
+			conclusion,
+			checkRunId,
+			title,
+			summary,
+		} = GithubCheckSchema.parse(req.body);
 
-        /**
-        * Get the Octokit Instance
-        */
-        const octokit = await getOctokitFromInstallationId(installationId);
+		/**
+		 * Get the Octokit Instance
+		 */
+		const octokit = await getOctokitFromInstallationId(installationId);
 
-        /**
-         * Create the Github Check
-         */
-        const { data } = await octokit.rest.checks.update({
-            owner,
-            repo,
-            check_run_id: checkRunId,
-            name: "Rolt",
-            head_sha: gitMetadata.commitSha,
-            status,
-            conclusion,
-            output: {
-                title,
-                summary,
-            },
-        });
+		/**
+		 * Create the Github Check
+		 */
+		const { data } = await octokit.rest.checks.update({
+			owner,
+			repo,
+			check_run_id: checkRunId,
+			name: 'Rolt',
+			head_sha: gitMetadata.commitSha,
+			status,
+			conclusion,
+			output: {
+				title,
+				summary,
+			},
+		});
+		/**
+		 * Updating the statuses
+		 */
+		if (status === 'in_progress') {
+			updateStatus({ deploymentId, status: 'Pending' });
+		} else if (conclusion === 'success') {
+			updateStatus({ deploymentId, status: 'Ready' });
+		} else if (conclusion === 'failure') {
+			updateStatus({ deploymentId, status: 'Error' });
+		}
 
-        /**
-         * Updating the statuses
-         */
-        if (status === "in_progress") {
-            updateStatus({ deploymentId, status: "Pending" });
-        } else if (conclusion === "success") {
-            updateStatus({ deploymentId, status: "Ready" });
-        } else if (conclusion === "failure") {
-            updateStatus({ deploymentId, status: "Error" });
-        }
-
-        return sendResponse({
-            res,
-            message: "Github Check Updated Successfully",
-            statusCode: 201,
-            data
-        })
-    } catch (error) {
-        return sendResponse({
-            res,
-            message: "Internal Server Error",
-            statusCode: 500,
-            data: error
-        })
-    }
-}
+		return sendResponse({
+			res,
+			message: 'Github Check Updated Successfully',
+			statusCode: 201,
+			data,
+		});
+	} catch (error) {
+		return sendResponse({
+			res,
+			message: 'Internal Server Error',
+			statusCode: 500,
+			data: error,
+		});
+	}
+};
 
 /**
  *
@@ -149,53 +152,55 @@ export const UpdateGithubCheck = async (req: Request, res: Response) => {
  * @returns
  */
 export const GetReposForOwner = async (req: Request, res: Response) => {
-    try {
-        const { owner } = req.params as unknown as { owner: string };
+	try {
+		const { owner } = req.params as unknown as { owner: string };
 
-        /**
-         * Get the Installation
-         */
-        const installation = await deploymentDB.installation.findUnique({
-            where: {
-                owner
-            }
-        });
+		/**
+		 * Get the Installation
+		 */
+		const installation = await deploymentDB.installation.findFirst({
+			where: {
+				owner,
+			},
+		});
 
-        /**
-         * Create an instance For the Installation Octokit Wrapper
-         */
-        const octokit = await getOctokitFromInstallationId(Number(installation?.installationId));
+		/**
+		 * Create an instance For the Installation Octokit Wrapper
+		 */
+		const octokit = await getOctokitFromInstallationId(
+			Number(installation?.installationId),
+		);
 
-        /**
-         * Calling the API
-         */
-        const response = await octokit.rest.apps.listReposAccessibleToInstallation();
+		/**
+		 * Calling the API
+		 */
+		const response =
+			await octokit.rest.apps.listReposAccessibleToInstallation();
 
-        if (!response.data.repositories) {
-            return sendResponse({
-                res,
-                message: "No Repos Found",
-                statusCode: 404,
-                data: response.data.repositories
-            });
-        }
+		if (!response.data.repositories) {
+			return sendResponse({
+				res,
+				message: 'No Repos Found',
+				statusCode: 404,
+				data: response.data.repositories,
+			});
+		}
 
-        return sendResponse({
-            res,
-            message: "Fetched repositories successfully",
-            statusCode: 200,
-            data: response.data.repositories
-        });
-
-    } catch (error) {
-        return sendResponse({
-            res,
-            message: "Internal Server Error",
-            statusCode: 500,
-            data: error
-        })
-    }
-}
+		return sendResponse({
+			res,
+			message: 'Fetched repositories successfully',
+			statusCode: 200,
+			data: response.data.repositories,
+		});
+	} catch (error) {
+		return sendResponse({
+			res,
+			message: 'Internal Server Error',
+			statusCode: 500,
+			data: error,
+		});
+	}
+};
 
 /**
  * Fetches a GitHub repository's metadata and detects the framework used in it.
@@ -208,56 +213,56 @@ export const GetReposForOwner = async (req: Request, res: Response) => {
  * @throws {Error} If an unexpected error occurs during repository fetch or framework detection.
  */
 export const GetRepoForImport = async (req: Request, res: Response) => {
-    try {
-        /**
-         * Get the Repository details
-         */
-        const { repo, owner } = GetRepoForImportSchema.parse(req.query);
-        console.log(req.query);
+	try {
+		/**
+		 * Get the Repository details
+		 */
+		const { repo, owner } = GetRepoForImportSchema.parse(req.query);
 
-        /**
-        * Get the Installation
-        */
-        const installation = await deploymentDB.installation.findUnique({
-            where: {
-                owner
-            }
-        });
+		/**
+		 * Get the Installation
+		 */
+		const installation = await deploymentDB.installation.findUnique({
+			where: {
+				owner,
+			},
+		});
 
-        const octokit = await getOctokitFromInstallationId(Number(installation?.installationId));
+		const octokit = await getOctokitFromInstallationId(
+			Number(installation?.installationId),
+		);
 
-        const response = await octokit.rest.repos.get({
-            owner,
-            repo
-        });
-        console.log(response);
+		const response = await octokit.rest.repos.get({
+			owner,
+			repo,
+		});
 
-        /**
-         * Getting the Framework Details
-         */
+		/**
+		 * Getting the Framework Details
+		 */
 
-        return sendResponse({
-            res,
-            message: "Repository fetched successfully",
-            statusCode: 200,
-            data: {
-                repo: response.data,
-            }
-        });
-    } catch (error) {
-        if (error instanceof ZodError) {
-            return sendResponse({
-                res,
-                message: "Invalid request query parameters",
-                statusCode: 400,
-                data: JSON.stringify(error.message)
-            });
-        }
-        return sendResponse({
-            res,
-            message: "Internal Server Error",
-            statusCode: 500,
-            data: error
-        });
-    }
+		return sendResponse({
+			res,
+			message: 'Repository fetched successfully',
+			statusCode: 200,
+			data: {
+				repo: response.data,
+			},
+		});
+	} catch (error) {
+		if (error instanceof ZodError) {
+			return sendResponse({
+				res,
+				message: 'Invalid request query parameters',
+				statusCode: 400,
+				data: JSON.stringify(error.message),
+			});
+		}
+		return sendResponse({
+			res,
+			message: 'Internal Server Error',
+			statusCode: 500,
+			data: error,
+		});
+	}
 };

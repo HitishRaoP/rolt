@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HOST_IP=$(ipconfig | grep "IPv4" | grep "192.168" | awk -F': ' '{print $2}')
+HOST_IP=$(ipconfig | grep -i "IPv4" | head -1 | awk '{print $NF}')
 TFVARS_FILE="terraform/terraform.tfvars"
 
 # Remove existing lines for these variables (if present)
